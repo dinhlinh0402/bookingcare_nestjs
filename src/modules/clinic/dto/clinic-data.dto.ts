@@ -26,12 +26,7 @@ export class ClinicCreateDto {
     @ApiPropertyOptional()
     email: string;
 
-    // @IsString()
-    // @IsNotEmpty()
-    // @IsOptional()
-    // @ApiPropertyOptional()
-    // image: string;
-
+    // Do gửi dưới dạng form data nên phỉa gửi array dưới dạng string rồi parse sang array
     @IsString()
     @IsOptional()
     @ApiPropertyOptional()

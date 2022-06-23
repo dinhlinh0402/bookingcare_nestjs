@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { RoleEnum } from 'src/common/constants/role';
+import { IFile } from 'src/common/interfaces/file.interface';
 import { UtilsService } from 'src/providers/util.service';
 import { sendMail } from 'src/utils/sendMail.util';
 import { FindOneOptions } from 'typeorm';
@@ -37,7 +38,7 @@ export class UserService {
 
     // Create account for admin, manager clinic, doctor
     @Transactional()
-    async createUser(userCreateDto: UserCreateDto): Promise<UserEntity> {
+    async createUser(userCreateDto: UserCreateDto, file: IFile): Promise<UserEntity> {
         const authUser = AuthService.getAuthUser();
         if (await this.isUserExist(userCreateDto.email)) {
             throw new ErrorException(
@@ -76,6 +77,7 @@ export class UserService {
         const user = this.userRepo.create({
             ...userCreateDto,
             password: hashPassword,
+            avatar: file ? file.path : '',
             creator: authUser,
         })
 
@@ -243,6 +245,7 @@ export class UserService {
     async updateUser(
         userData: UserUpdateDto,
         userId: string,
+        file: IFile
     ): Promise<UserEntity> {
         const authUser = AuthService.getAuthUser();
         console.log(authUser);
@@ -324,6 +327,9 @@ export class UserService {
             }
 
             user.specialty = specialty;
+        }
+        if (file) {
+            user.avatar = file.path;
         }
 
         user = Object.assign(user, userData);

@@ -3,6 +3,7 @@ import { CodeMessage } from 'src/common/constants/code-message';
 import { ErrorException } from 'src/exceptions/error.exception';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { AuthService } from '../auth/auth.service';
+import { IFile } from '../../common/interfaces/file.interface';
 import { SpecialtyCreateDto, SpecialtyUpdateDto } from './dto/specialty-data';
 import { SpecialtyPageDto, SpecialtyPageOptionsDto } from './dto/specialty-page';
 import { SpecialtyEntity } from './specialty.entity';
@@ -15,7 +16,10 @@ export class SpecialtyService {
     ) { }
 
     @Transactional()
-    async createSpecialty(speciltyData: SpecialtyCreateDto): Promise<SpecialtyEntity> {
+    async createSpecialty(
+        speciltyData: SpecialtyCreateDto,
+        file: IFile
+    ): Promise<SpecialtyEntity> {
         const authUse = AuthService.getAuthUser();
 
         const checkExit = await this.specialtyRepo.findOne({
@@ -31,6 +35,7 @@ export class SpecialtyService {
 
         const specialty = this.specialtyRepo.create({
             ...speciltyData,
+            image: file ? file.path : '',
             creator: authUse,
         })
 
@@ -75,7 +80,8 @@ export class SpecialtyService {
     @Transactional()
     async updateSpecialty(
         specialtyId: string,
-        specialtyData: SpecialtyUpdateDto
+        specialtyData: SpecialtyUpdateDto,
+        file: IFile
     ): Promise<SpecialtyEntity> {
 
         let specialty = await this.specialtyRepo.findOne({
@@ -87,6 +93,9 @@ export class SpecialtyService {
                 HttpStatus.NOT_FOUND,
                 CodeMessage.SPECIALTY_NOT_EXIST,
             );
+        }
+        if (file) {
+            specialty.image = file.path;
         }
 
         specialty = Object.assign(specialty, specialtyData);

@@ -5,6 +5,7 @@ import { AbstractDto } from "../../../common/dto/abstract.dto";
 import { UserEntity } from "../user.entity";
 import { SpecialtyDto } from "src/modules/specialty/dto/specialty.dto";
 import { ClinicDto } from "src/modules/clinic/dto/clinic.dto";
+import { DoctorInforDto } from "src/modules/doctor-infor/dto/doctor-infor.dto";
 
 export class UserDto extends AbstractDto {
     @ApiProperty()
@@ -61,6 +62,9 @@ export class UserDto extends AbstractDto {
     @ApiPropertyOptional({ type: () => SpecialtyDto })
     specialty: SpecialtyDto;
 
+    @ApiPropertyOptional({ type: () => DoctorInforDto })
+    doctorInfor: DoctorInforDto;
+
     @ApiPropertyOptional({ type: () => UserDto })
     creator: UserDto;
 
@@ -86,6 +90,10 @@ export class UserDto extends AbstractDto {
 
         if (entity.creator) {
             this.creator = entity.creator;
+        }
+
+        if (entity.doctorInfor) {
+            this.doctorInfor = entity.doctorInfor;
         }
 
         if (entity.specialty) {

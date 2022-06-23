@@ -17,7 +17,8 @@ export class UserCreateDto {
 
     @IsString()
     @IsNotEmpty()
-    @ApiProperty()
+    @IsOptional()
+    @ApiPropertyOptional()
     middleName: string;
 
     @IsString()
@@ -41,23 +42,27 @@ export class UserCreateDto {
 
     @IsDateString()
     @IsNotEmpty()
-    @ApiProperty()
+    @IsOptional()
+    @ApiPropertyOptional()
     birthday: Date;
 
     @IsString()
     @IsNotEmpty()
-    @ApiProperty()
+    @IsOptional()
+    @ApiPropertyOptional()
     address: string;
 
+    @IsPhoneNumber('VN')
     @IsString()
     @IsNotEmpty()
-    @ApiProperty()
+    @IsOptional()
+    @ApiPropertyOptional()
     phoneNumber: string;
 
     @IsUUID('4')
     @IsNotEmpty()
-    // @IsOptional()
-    @ApiProperty()
+    @IsOptional()
+    @ApiPropertyOptional()
     clinicId: string;
 
     @IsUUID('4')
@@ -128,7 +133,7 @@ export class UserUpdateDto {
     @IsUUID('4')
     @IsNotEmpty()
     @IsOptional()
-    @ApiProperty()
+    @ApiPropertyOptional()
     clinicId: string;
 
     @IsUUID('4')

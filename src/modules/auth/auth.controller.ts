@@ -1,8 +1,10 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthUser } from 'src/decorators/auth-decorator';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
 import { UserDto } from '../user/dto/user.dto';
+import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoginPayloadDto } from './dto/login-payload.dto';
@@ -66,9 +68,11 @@ export class AuthController {
         type: UserDto,
         description: 'Current user infor',
     })
-    getCurrentUser() {
-        const authUser = AuthService.getAuthUser();
+    getCurrentUser(
+        @AuthUser() user: UserEntity
+    ) {
+        // const authUser = AuthService.getAuthUser();
 
-        return authUser.toDto();
+        return user.toDto();
     }
 }

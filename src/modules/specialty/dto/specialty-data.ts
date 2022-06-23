@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class SpecialtyCreateDto {
     @IsString()
@@ -10,27 +10,17 @@ export class SpecialtyCreateDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    image: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
     description: string;
 }
 
 export class SpecialtyUpdateDto {
     @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
+    @IsOptional()
+    @ApiPropertyOptional()
     name: string;
 
     @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    image: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
+    @IsOptional()
+    @ApiPropertyOptional()
     description: string;
 }

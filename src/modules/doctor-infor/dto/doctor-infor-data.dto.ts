@@ -20,12 +20,12 @@ export class DoctorInforCreateDto {
 
     @IsEnum(DoctorInforPayment)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ enum: DoctorInforPayment })
     payment: DoctorInforPayment;
 
     @IsEnum(DoctorInforPosition)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ enum: DoctorInforPosition })
     position: DoctorInforPosition;
 
     @IsString()
@@ -58,12 +58,12 @@ export class DoctorInforUpdateDto {
 
     @IsEnum(DoctorInforPayment)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ enum: DoctorInforPayment })
     payment: DoctorInforPayment;
 
     @IsEnum(DoctorInforPosition)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ enum: DoctorInforPosition })
     position: DoctorInforPosition;
 
     @IsString()

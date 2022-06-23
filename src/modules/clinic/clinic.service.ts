@@ -7,8 +7,8 @@ import { SpecialtyRepository } from '../specialty/specialty.repository';
 import { ClinicEntity } from './clinic.entity';
 import { ClinicRepository } from './clinic.repository';
 import { ClinicCreateDto, ClinicUpdateDto } from './dto/clinic-data.dto';
-import { ClinicPageDto, ClinicPageOptinonsDto } from './dto/clinic-page.dto';
-import { IFile } from './file.interface';
+import { ClinicPageDto, ClinicPageOptionsDto } from './dto/clinic-page.dto';
+import { IFile } from '../../common/interfaces/file.interface';
 
 @Injectable()
 export class ClinicService {
@@ -71,7 +71,7 @@ export class ClinicService {
     }
 
     async getClinics(
-        clinicPageOptionsDto: ClinicPageOptinonsDto
+        clinicPageOptionsDto: ClinicPageOptionsDto
     ): Promise<ClinicPageDto> {
         console.log(clinicPageOptionsDto);
         const queryBuilder = this.clinicRepo

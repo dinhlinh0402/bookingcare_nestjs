@@ -1,27 +1,27 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsBoolean, IsEmail, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsEmail, IsOptional, IsString, IsUUID } from "class-validator";
 import { PageMetaDto } from "src/common/dto/page-meta.dto";
 import { PageOptionsDto } from "src/common/dto/page-options.dto";
-import { ClinicDto } from "./clinic.dto";
+import { DoctorDto } from "./doctor.dto";
 
-export class ClinicPageDto {
+export class DoctorPageDto {
     @ApiProperty({
-        type: ClinicDto,
+        type: DoctorDto,
         isArray: true
     })
-    readonly data: ClinicDto[];
+    readonly data: DoctorDto[];
 
     @ApiProperty()
     readonly meta: PageMetaDto;
 
-    constructor(data: ClinicDto[], meta: PageMetaDto) {
+    constructor(data: DoctorDto[], meta: PageMetaDto) {
         this.data = data;
         this.meta = meta;
     }
 }
 
-export class ClinicPageOptionsDto extends PageOptionsDto {
+export class DoctorPageOptionsDto extends PageOptionsDto {
     @IsString()
     @IsOptional()
     @ApiPropertyOptional()
@@ -30,16 +30,21 @@ export class ClinicPageOptionsDto extends PageOptionsDto {
     @IsEmail()
     @IsOptional()
     @ApiPropertyOptional()
-    email: string
+    email: string;
 
-    @IsString()
+    @IsUUID('4')
     @IsOptional()
     @ApiPropertyOptional()
-    phone: string
+    clinicId: string;
 
+    @IsUUID('4')
+    @IsOptional()
     @ApiPropertyOptional()
+    specialtyId: string;
+
     @IsBoolean()
     @IsOptional()
-    @Transform(({ value }) => ['1', 1, 'true', true].includes(value))
-    active: boolean;
+    @Transform(({ value }) => ['1', 'true', 1, true].includes(value))
+    @ApiPropertyOptional({ default: true })
+    topDoctor: boolean;
 }

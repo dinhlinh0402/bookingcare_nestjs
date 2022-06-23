@@ -7,11 +7,12 @@ import { PermissionGuard } from 'src/guards/permission.guard';
 import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
 import { ClinicService } from './clinic.service';
 import { ClinicCreateDto, ClinicUpdateDto } from './dto/clinic-data.dto';
-import { ClinicPageDto, ClinicPageOptinonsDto } from './dto/clinic-page.dto';
+import { ClinicPageDto, ClinicPageOptionsDto } from './dto/clinic-page.dto';
 import { ClinicDto } from './dto/clinic.dto';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ErrorException } from 'src/exceptions/error.exception';
+import { CodeMessage } from 'src/common/constants/code-message';
 
 @Controller('clinic')
 @ApiTags('clinic')
@@ -54,7 +55,7 @@ export class ClinicController {
                 return callback(
                     new ErrorException(
                         HttpStatus.BAD_REQUEST,
-                        'Only image files are allowed!',
+                        CodeMessage.ONLY_IMAGE_FILES_ARE_ALLOWED,
                     ),
                     false,
                 );
@@ -79,7 +80,7 @@ export class ClinicController {
     })
     async getClinics(
         @Query(new ValidationPipe({ transform: true }))
-        clinicPagesOptionsDto: ClinicPageOptinonsDto
+        clinicPagesOptionsDto: ClinicPageOptionsDto
     ): Promise<ClinicPageDto> {
         return await this.clinicService.getClinics(clinicPagesOptionsDto);
     }
@@ -132,7 +133,7 @@ export class ClinicController {
                 return callback(
                     new ErrorException(
                         HttpStatus.BAD_REQUEST,
-                        'Only image files are allowed!',
+                        CodeMessage.ONLY_IMAGE_FILES_ARE_ALLOWED,
                     ),
                     false,
                 );
