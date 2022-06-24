@@ -86,6 +86,8 @@ export class SpecialtyController {
         return await this.specialtyService.getSpecialties(specialtyPageOptionsDto);
     }
 
+
+
     @Get(':specialtyId')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
@@ -165,6 +167,24 @@ export class SpecialtyController {
         @Param('specialtyId') specialtyId: string
     ): Promise<boolean> {
         return await this.specialtyService.deleteSpecialty(specialtyId);
+    }
+
+    @Get('specialty-clinic/:clinicId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get list specialty by clinic id',
+        type: SpecialtyPageDto
+    })
+    async getSpecialtyByClinicId(
+        @Param('clinicId') clinicId: string,
+        @Query(new ValidationPipe({ transform: true }))
+        pageOptionsDto: SpecialtyPageOptionsDto
+    ): Promise<SpecialtyPageDto> {
+        const specialties = await this.specialtyService.getSpecialtiesByClinicId(clinicId, pageOptionsDto);
+        return specialties;
     }
 
 }

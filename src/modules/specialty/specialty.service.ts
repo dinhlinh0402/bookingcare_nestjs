@@ -8,11 +8,14 @@ import { SpecialtyCreateDto, SpecialtyUpdateDto } from './dto/specialty-data';
 import { SpecialtyPageDto, SpecialtyPageOptionsDto } from './dto/specialty-page';
 import { SpecialtyEntity } from './specialty.entity';
 import { SpecialtyRepository } from './specialty.repository';
+import { ClinicRepository } from '../clinic/clinic.repository';
+import { Brackets } from 'typeorm';
 
 @Injectable()
 export class SpecialtyService {
     constructor(
         public readonly specialtyRepo: SpecialtyRepository,
+        public readonly clinicRepo: ClinicRepository,
     ) { }
 
     @Transactional()
@@ -118,5 +121,41 @@ export class SpecialtyService {
 
         const deleteSpecialty = await this.specialtyRepo.delete(specialty.id);
         return deleteSpecialty ? true : false;
+    }
+
+    async getSpecialtiesByClinicId(
+        clinicId: string,
+        pageOptionsDto: SpecialtyPageOptionsDto
+    ): Promise<SpecialtyPageDto> {
+        const clinic = await this.clinicRepo.findOne({
+            where: { id: clinicId, active: true },
+            relations: ['specialties']
+        })
+        if (!clinic) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.CLINIC_NOT_EXIST,
+            );
+        }
+
+        const queryBuilder = this.specialtyRepo
+            .createQueryBuilder('specialties')
+            .leftJoin(
+                'clinics_specialties_specialties',
+                'css',
+                'css.specialties_id = specialties.id'
+            )
+            .leftJoin('clinics', 'c', 'c.id = css.clinics_id')
+            .select(['specialties'])
+            .where(
+                'css.clinics_id = :clinicId AND c.active = :active', {
+                clinicId: clinicId,
+                active: true
+            })
+
+        const [entities, pageMetaDto] = await queryBuilder.paginate(pageOptionsDto)
+
+        return new SpecialtyPageDto(entities.toDtos(), pageMetaDto);
+
     }
 }

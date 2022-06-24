@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from "class-validator";
 
 export class ClinicCreateDto {
     @IsString()
@@ -14,6 +14,7 @@ export class ClinicCreateDto {
     @ApiPropertyOptional()
     address: string;
 
+    @IsPhoneNumber('VN')
     @IsString()
     @IsNotEmpty()
     @IsOptional()
@@ -45,6 +46,7 @@ export class ClinicUpdateDto {
     @ApiPropertyOptional()
     address: string;
 
+    @IsPhoneNumber('VN')
     @IsString()
     @IsNotEmpty()
     @IsOptional()

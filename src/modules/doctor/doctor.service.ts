@@ -1,5 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { CodeMessage } from 'src/common/constants/code-message';
 import { RoleEnum } from 'src/common/constants/role';
+import { ErrorException } from 'src/exceptions/error.exception';
+import { UserEntity } from '../user/user.entity';
 import { UserRepository } from '../user/user.repository';
 import { DoctorPageDto, DoctorPageOptionsDto } from './dto/doctor-page.dto';
 
@@ -12,7 +15,7 @@ export class DoctorService {
 
     async getDoctors(
         pageOptionsDto: DoctorPageOptionsDto
-    ) {
+    ): Promise<DoctorPageDto> {
         const queryBuilder = this.userRepo
             .createQueryBuilder('doctor')
             .leftJoinAndSelect('doctor.creator', 'creator')
@@ -57,5 +60,29 @@ export class DoctorService {
         const [entities, pageMetaDto] = await queryBuilder.paginate(pageOptionsDto);
 
         return new DoctorPageDto(entities.toDtos(), pageMetaDto);
+    }
+
+    async getDoctorById(doctorId: string): Promise<UserEntity> {
+        const doctor = await this.userRepo
+            .createQueryBuilder('doctor')
+            .leftJoinAndSelect('doctor.clinic', 'clinic')
+            .leftJoinAndSelect('doctor.specialty', 'specialty')
+            .where(
+                'doctor.id = :doctorId AND doctor.role = :role AND clinic.active = :active', {
+                doctorId: doctorId,
+                role: RoleEnum.DOCTOR,
+                active: true,
+            }
+            )
+            .getOne();
+
+        if (!doctor) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.DOCTOR_NOT_EXIST,
+            )
+        }
+
+        return doctor;
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Permissions } from 'src/decorators/permission.decorator';
 import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
@@ -45,7 +45,21 @@ export class DoctorController {
     async getDoctors(
         @Query(new ValidationPipe({ transform: true }))
         doctorPagesOptionsDto: DoctorPageOptionsDto
-    ) {
+    ): Promise<DoctorPageDto> {
         return await this.doctorService.getDoctors(doctorPagesOptionsDto);
+    }
+
+    @Get(':doctorId')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get doctor by id',
+        type: DoctorDto,
+    })
+    async getDoctorById(
+        @Param('doctorId') doctorId: string,
+    ): Promise<DoctorDto> {
+        const doctor = await this.doctorService.getDoctorById(doctorId);
+        return doctor.toDto();
     }
 }
