@@ -298,6 +298,21 @@ export class UserService {
                     HttpStatus.BAD_REQUEST,
                     CodeMessage.ROLE_USER_NOT_UPDATE_FOR_ROLE_DOCTOR
                 );
+            } else if (authUser.role == RoleEnum.MANAGER_CLINIC && userData.role == RoleEnum.ADMIN) {
+                throw new ErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    CodeMessage.ROLE_MANAGER_CLINIC_NOT_UPDATE_FOR_ROLE_ADMIN,
+                );
+            } else if (authUser.role == RoleEnum.MANAGER_CLINIC && userData.role == RoleEnum.ADMIN) {
+                throw new ErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    CodeMessage.ROLE_MANAGER_CLINIC_NOT_UPDATE_FOR_ROLE_ADMIN,
+                );
+            } else if (authUser.role == RoleEnum.MANAGER_CLINIC && userData.role == RoleEnum.USER) {
+                throw new ErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    CodeMessage.ROLE_MANAGER_CLINIC_NOT_UPDATE_FOR_ROLE_USER,
+                );
             }
         }
         if (userData.clinicId) {
@@ -336,5 +351,36 @@ export class UserService {
         await this.userRepo.save(user);
 
         return user;
+    }
+
+    async deleteUser(userId: string): Promise<boolean> {
+        const authUser = AuthService.getAuthUser();
+
+        const user = await this.userRepo.findOne({
+            where: { id: userId }
+        });
+
+        if (!user) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.USER_NOT_EXIST,
+            );
+        }
+
+        if (authUser.role == RoleEnum.MANAGER_CLINIC && user.role == RoleEnum.ADMIN) {
+            throw new ErrorException(
+                HttpStatus.BAD_REQUEST,
+                CodeMessage.ROLE_MANAGER_CLINIC_NOT_DELETE_FOR_ROLE_ADMIN,
+            );
+        } else if (authUser.role == RoleEnum.MANAGER_CLINIC && user.role == RoleEnum.USER) {
+            throw new ErrorException(
+                HttpStatus.BAD_REQUEST,
+                CodeMessage.ROLE_MANAGER_CLINIC_NOT_DELETE_FOR_ROLE_USER,
+            );
+        }
+
+        await this.userRepo.delete(user.id);
+        return true;
+
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
@@ -136,6 +136,21 @@ export class UserController {
     ): Promise<UserDto> {
         const user = await this.userService.updateUser(userUpdateDto, userId, file);
         return user.toDto();
+    }
+
+    @Delete(':userId')
+    @UseGuards(JwtAuthGuard, PermissionGuard)
+    @Permissions('admin', 'manager_clinic')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: 200,
+        description: 'Delete user',
+        type: Boolean,
+    })
+    async deleteUser(
+        @Param('userId') userId: string
+    ): Promise<boolean> {
+        return await this.userService.deleteUser(userId);
     }
 
 }
