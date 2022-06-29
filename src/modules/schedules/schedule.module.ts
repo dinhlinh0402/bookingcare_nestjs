@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserRepository } from '../user/user.repository';
 import { SchedulesController } from './schedule.controller';
 import { ScheduleRepository } from './schedule.repository';
 import { SchedulesService } from './schedule.service';
@@ -8,6 +9,7 @@ import { SchedulesService } from './schedule.service';
   imports: [
     TypeOrmModule.forFeature([
       ScheduleRepository,
+      UserRepository,
     ])
   ],
   controllers: [SchedulesController],

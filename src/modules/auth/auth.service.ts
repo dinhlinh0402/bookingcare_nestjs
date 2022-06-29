@@ -53,7 +53,6 @@ export class AuthService {
                 CodeMessage.PASSWORD_NOT_MATCH
             )
         }
-        console.log(isPassword);
 
         return user;
     }

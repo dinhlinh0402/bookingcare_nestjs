@@ -7,11 +7,15 @@ import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
 import { SchedulePageDto, SchedulePageOptionsDto } from './dto/schdule-page.dto';
 import { ScheduleCreateDto, ScheduleUpdateDto } from './dto/schedule-data.dto';
 import { ScheduleDto } from './dto/schedule.dto';
+import { SchedulesService } from './schedule.service';
 
 @Controller('schedules')
 @ApiTags('schedules')
 @UseInterceptors(AuthUserInterceptor)
 export class SchedulesController {
+    constructor(
+        private scheduleService: SchedulesService,
+    ) { }
 
     @Post()
     @ApiBearerAuth()
@@ -23,10 +27,11 @@ export class SchedulesController {
         description: 'Create schedules for doctor',
         type: [ScheduleDto]
     })
-    async createSchedules(
+    async createSchedule(
         @Body() scheduleCreateDto: ScheduleCreateDto
-    ) {
-
+    ): Promise<ScheduleDto[]> {
+        const schedules = await this.scheduleService.createSchedule(scheduleCreateDto);
+        return schedules;
     }
 
     //update report-work
@@ -59,6 +64,20 @@ export class SchedulesController {
         schedulePageOptionsDto: SchedulePageOptionsDto
     ) {
 
+    }
+
+    @Get(':scheduleId')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get list schedules by doctor id',
+        type: ScheduleDto
+    })
+    async getScheduleById(
+        @Param('scheduleId') scheduleId: string
+    ): Promise<ScheduleDto> {
+        const schedule = await this.scheduleService.getScheduleById(scheduleId);
+        return schedule.toDto();
     }
 
     @Delete(':scheduleId')

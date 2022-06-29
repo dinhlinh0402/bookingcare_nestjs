@@ -1,4 +1,5 @@
 export enum StatusSchedule {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
+    ACTIVE = 'ACTIVE',
+    BOOKED = 'BOOKED',
+    EXPIRED = 'EXPIRED',
 }
