@@ -48,8 +48,9 @@ export class SchedulesController {
     async updateSchedule(
         @Param('doctorId') doctorId: string,
         @Body() scheduleUpdateDto: ScheduleUpdateDto
-    ) {
-
+    ): Promise<ScheduleDto[]> {
+        const schedules = await this.scheduleService.updateSchedule(scheduleUpdateDto, doctorId);
+        return schedules;
     }
 
     @Get()
@@ -62,8 +63,8 @@ export class SchedulesController {
     async getListSchedule(
         @Query(new ValidationPipe({ transform: true }))
         schedulePageOptionsDto: SchedulePageOptionsDto
-    ) {
-
+    ): Promise<SchedulePageDto> {
+        return await this.scheduleService.getSchedules(schedulePageOptionsDto)
     }
 
     @Get(':scheduleId')
@@ -92,8 +93,8 @@ export class SchedulesController {
     })
     async deleteSchedule(
         @Param('scheduleId') scheduleId: string
-    ) {
-
+    ): Promise<boolean> {
+        return await this.scheduleService.deleteSchedule(scheduleId)
     }
 
 

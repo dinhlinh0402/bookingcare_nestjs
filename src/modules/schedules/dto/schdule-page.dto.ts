@@ -1,5 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsDateString, IsNotEmpty, IsUUID } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
+import { IsDate, IsDateString, IsNotEmpty, IsOptional, IsUUID } from "class-validator";
 import { PageMetaDto } from "src/common/dto/page-meta.dto";
 import { PageOptionsDto } from "src/common/dto/page-options.dto";
 import { ScheduleDto } from "./schedule.dto";
@@ -26,21 +27,21 @@ export class SchedulePageOptionsDto extends PageOptionsDto {
     @ApiProperty()
     doctorId: string;
 
-    @IsDateString()
-    @IsNotEmpty()
-    @ApiProperty()
-    timeTo: Date;
+    // @IsDateString()
+    // @IsNotEmpty()
+    // @ApiProperty()
+    // timeTo: Date;
 
-    @IsDateString()
-    @IsNotEmpty()
-    @ApiProperty()
-    timeFrom: Date;
-
+    // @IsDateString()
+    // @IsNotEmpty()
+    // @ApiProperty()
+    // timeFrom: Date;
 
     // Dùng cái này mới có thể set date
-    // @IsDate()
+    @IsDate()
     // @IsOptional()
-    // @ApiPropertyOptional()
-    // @Transform(({ value }) => new Date(value))
-    // timeEnd: Date;
+    @IsNotEmpty()
+    @ApiProperty()
+    @Transform(({ value }) => new Date(value))
+    date: Date;
 }

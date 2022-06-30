@@ -2,6 +2,7 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 import { StatusSchedule } from "src/common/constants/schedule.enum";
 import { AbstractDto } from "src/common/dto/abstract.dto";
 import { UserDto } from "src/modules/user/dto/user.dto";
+import { Timestamp } from "typeorm";
 import { ScheduleEntity } from "../schedule.entity";
 
 export class ScheduleDto extends AbstractDto {
@@ -13,6 +14,9 @@ export class ScheduleDto extends AbstractDto {
 
     @ApiPropertyOptional()
     timeEnd: Date;
+
+    @ApiPropertyOptional()
+    date: string;
 
     @ApiPropertyOptional({ type: () => UserDto })
     doctor: UserDto;
@@ -26,6 +30,7 @@ export class ScheduleDto extends AbstractDto {
         this.status = entity.status;
         this.timeStart = entity.timeStart;
         this.timeEnd = entity.timeEnd;
+        this.date = entity.date;
 
         if (entity.doctor) {
             this.doctor = entity.doctor;

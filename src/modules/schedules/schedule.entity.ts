@@ -1,6 +1,6 @@
 import { AbstractEntity } from "src/common/abstract.entity";
 import { StatusSchedule } from "src/common/constants/schedule.enum";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, Timestamp } from "typeorm";
 import { UserEntity } from "../user/user.entity";
 import { ScheduleDto } from "./dto/schedule.dto";
 
@@ -15,6 +15,9 @@ export class ScheduleEntity extends AbstractEntity<ScheduleDto> {
 
     @Column()
     timeEnd: Date;
+
+    @Column()
+    date: string;
 
     @ManyToOne(() => UserEntity)
     doctor: UserEntity;
