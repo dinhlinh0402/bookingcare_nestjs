@@ -78,6 +78,7 @@ export class AuthController {
     }
 
     @Post('change-password')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(AuthUserInterceptor)
     @HttpCode(HttpStatus.OK)
