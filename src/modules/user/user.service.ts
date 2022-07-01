@@ -114,16 +114,24 @@ export class UserService {
 
         const createNewUser = await this.userRepo.save(user)
 
-        /*  if (createNewUser) {
-             const mailContent = newUserMailTemplate(
-                 createNewUser.lastName,
-                 createNewUser.email,
-                 password
-             )
- 
-             await sendMail(user.email, newUserSubject, mailContent)
-         }
-  */
+        if (createNewUser) {
+            const mailContent = newUserMailTemplate(
+                createNewUser.lastName,
+                createNewUser.email,
+                password
+            )
+            try {
+                await sendMail(user.email, newUserSubject, mailContent)
+            } catch (error) {
+                console.log('error: ', error);
+                throw new ErrorException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    CodeMessage.CAN_NOT_SEND_MAIL_TO_USER,
+                );
+            }
+
+        }
+
         return user;
     }
 
@@ -163,7 +171,7 @@ export class UserService {
         return user;
     }
 
-    async getUsers(optionsDto: UsersPageOptionsDto) {
+    async getUsers(optionsDto: UsersPageOptionsDto): Promise<UsersPageDto> {
         const user = AuthService.getAuthUser();
 
         const queryBuilder = this.userRepo
@@ -239,6 +247,22 @@ export class UserService {
         const [entities, pageMetaDto] = await queryBuilder.paginate(optionsDto);
 
         return new UsersPageDto(entities.toDtos(), pageMetaDto);
+    }
+
+    async getUserById(userId: string): Promise<UserEntity> {
+        const user = await this.userRepo.findOne({
+            where: { id: userId },
+            relations: ['creator', 'clinic', 'specialty']
+        });
+
+        if (!user) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.USER_NOT_EXIST,
+            );
+        }
+
+        return user;
     }
 
     @Transactional()
@@ -353,6 +377,7 @@ export class UserService {
         return user;
     }
 
+    @Transactional()
     async deleteUser(userId: string): Promise<boolean> {
         const authUser = AuthService.getAuthUser();
 
@@ -382,5 +407,21 @@ export class UserService {
         await this.userRepo.delete(user.id);
         return true;
 
+    }
+
+    @Transactional()
+    async changeAvatar(fileInfo: IFile): Promise<UserEntity> {
+        const authUser = AuthService.getAuthUser();
+
+        if (!fileInfo) {
+            throw new ErrorException(
+                HttpStatus.BAD_REQUEST,
+                CodeMessage.FILE_CAN_NOT_EMPTY,
+            );
+        }
+
+        authUser.avatar = fileInfo.path;
+        await this.userRepo.save(authUser);
+        return authUser;
     }
 }

@@ -8,6 +8,7 @@ import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoginPayloadDto } from './dto/login-payload.dto';
+import { UserChangePasswordDto, UserResetPasswordDto } from './dto/user-change-password.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { UserRegisterDto } from './dto/user-register.dto';
 
@@ -73,6 +74,36 @@ export class AuthController {
     ) {
         // const authUser = AuthService.getAuthUser();
 
+        return user.toDto();
+    }
+
+    @Post('change-password')
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(AuthUserInterceptor)
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        status: HttpStatus.OK,
+        description: 'Change password successfully',
+        type: UserChangePasswordDto,
+    })
+    async userChangePassword(
+        @Body() userChangePassword: UserChangePasswordDto,
+    ): Promise<UserDto> {
+        const user = await this.authService.userChangePassword(userChangePassword);
+        return user.toDto();
+    }
+
+    @Post('reset-password-via-mail')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        status: HttpStatus.OK,
+        description: 'Reset password via email successfully',
+        type: UserDto,
+    })
+    async resetPasswordViaMail(
+        @Body() userResetPasswordDto: UserResetPasswordDto
+    ): Promise<UserDto> {
+        const user = await this.authService.resetPasswordViaMail(userResetPasswordDto);
         return user.toDto();
     }
 }

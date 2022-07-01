@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { CodeMessage } from 'src/common/constants/code-message';
@@ -84,9 +84,24 @@ export class UserController {
     async getUsers(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: UsersPageOptionsDto
-    ) {
-        console.log(pageOptionsDto);
+    ): Promise<UsersPageDto> {
         return this.userService.getUsers(pageOptionsDto)
+    }
+
+    @Get(':userId')
+    @UseGuards(JwtAuthGuard, PermissionGuard)
+    @Permissions('admin', 'manager_clinic')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get user by id',
+        type: UserDto,
+    })
+    async getUserById(
+        @Param('userId') userId: string
+    ): Promise<UserDto> {
+        const user = await this.userService.getUserById(userId);
+        return user.toDto();
     }
 
     @Put(':userId')
@@ -153,4 +168,51 @@ export class UserController {
         return await this.userService.deleteUser(userId);
     }
 
+    @Post('change-avatar')
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(AuthUserInterceptor)
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        status: HttpStatus.OK,
+        description: 'Change avatar',
+        type: UserDto,
+    })
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads/avatars',
+            filename: (req, file, callback) => {
+                const name = file.originalname.split('.')[0];
+                const extName = extname(file.originalname);
+                const randomName = Array(4)
+                    .fill(4)
+                    .map(() => Math.floor(Math.random() * 10).toString(10))
+                    .join('')
+                callback(null, `${name}-${randomName}${extName}`);
+            },
+        }),
+        fileFilter: (req, file, callback) => {
+            const mimetypes = [
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+                'image/webp',
+            ]
+            if (!mimetypes.includes(file.mimetype)) {
+                return callback(
+                    new ErrorException(
+                        HttpStatus.BAD_REQUEST,
+                        CodeMessage.ONLY_IMAGE_FILES_ARE_ALLOWED,
+                    ),
+                    false,
+                );
+            }
+            callback(null, true);
+        }
+    }))
+    async changeAvatar(
+        @UploadedFile() file
+    ): Promise<UserDto> {
+        const user = await this.userService.changeAvatar(file);
+        return user;
+    }
 }
