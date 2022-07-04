@@ -16,7 +16,7 @@ export const ormConfigOptions: ConnectionOptions = {
     // entities: ["dist/**/*.entity{.ts,.js}"],
     entities: [__dirname + '/modules/**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/migrations/*{.ts,.js}'],
-    synchronize: false,
+    synchronize: true,
     charset: 'utf8mb4',
     logging: true
 }
