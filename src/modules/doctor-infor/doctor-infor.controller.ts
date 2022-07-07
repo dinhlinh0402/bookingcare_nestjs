@@ -10,7 +10,6 @@ import { DoctorInforDto } from './dto/doctor-infor.dto';
 
 @Controller('doctor-infor')
 @ApiTags('doctor')
-@ApiBearerAuth()
 @UseInterceptors(AuthUserInterceptor)
 export class DoctorInforController {
     constructor(
@@ -18,6 +17,7 @@ export class DoctorInforController {
     ) { }
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PermissionGuard)
     @Permissions('admin', 'manager_clinic', 'doctor')
     @HttpCode(HttpStatus.OK)
@@ -48,6 +48,7 @@ export class DoctorInforController {
     }
 
     @Put(':doctorInforId')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PermissionGuard)
     @Permissions('admin', 'manager_clinic', 'doctor')
     @HttpCode(HttpStatus.OK)
@@ -68,6 +69,7 @@ export class DoctorInforController {
     }
 
     @Delete(':doctorInforId')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PermissionGuard)
     @Permissions('admin', 'manager_clinic', 'doctor')
     @HttpCode(HttpStatus.OK)
