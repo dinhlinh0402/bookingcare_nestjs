@@ -1,12 +1,44 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { BookingStatus } from "src/common/constants/booking.enum";
+import { BookingStatus, BookingType } from "src/common/constants/booking.enum";
+import { GenderEnum } from "src/common/constants/gender";
 import { AbstractDto } from "src/common/dto/abstract.dto";
 import { ScheduleDto } from "src/modules/schedules/dto/schedule.dto";
 import { UserDto } from "src/modules/user/dto/user.dto";
-import { BookingEntity } from "../booking.entity";
+import { BookingEntity, BookingRelativesEntity } from "../booking.entity";
+
+export class BookingRelativesDto extends AbstractDto {
+    @ApiPropertyOptional()
+    name: string;
+
+    @ApiPropertyOptional()
+    email: string;
+
+    @ApiPropertyOptional()
+    phone: string;
+
+    @ApiPropertyOptional({ type: 'enum', enum: GenderEnum })
+    gender: GenderEnum;
+
+    @ApiPropertyOptional()
+    birthday: Date;
+
+    @ApiPropertyOptional()
+    address: string;
+
+    constructor(entity: BookingRelativesEntity) {
+        super(entity);
+
+        this.name = entity.name;
+        this.email = entity.email;
+        this.phone = entity.phone;
+        this.gender = entity.gender;
+        this.birthday = entity.birthday;
+        this.address = entity.address;
+    }
+}
 
 export class BookingDto extends AbstractDto {
-    @ApiPropertyOptional({ type: "enum", enum: BookingStatus })
+    @ApiPropertyOptional({ type: 'enum', enum: BookingStatus })
     status: BookingStatus;
 
     @ApiPropertyOptional()
@@ -21,8 +53,14 @@ export class BookingDto extends AbstractDto {
     @ApiPropertyOptional({ type: () => ScheduleDto })
     schedule: ScheduleDto;
 
+    @ApiPropertyOptional({ type: 'enum', enum: BookingType })
+    type: BookingType;
+
     @ApiPropertyOptional()
     reason: string;
+
+    @ApiPropertyOptional({ type: () => BookingRelativesDto })
+    bookingRelatives: BookingRelativesDto;
 
     @ApiPropertyOptional()
     date: string;
@@ -34,6 +72,7 @@ export class BookingDto extends AbstractDto {
         this.token = entity.token;
         this.reason = entity.reason;
         this.date = entity.date;
+        this.type = entity.type;
 
         if (entity.doctor) {
             this.doctor = entity.doctor;
@@ -46,5 +85,10 @@ export class BookingDto extends AbstractDto {
         if (entity.schedule) {
             this.schedule = entity.schedule;
         }
+
+        if (entity.bookingRelatives) {
+            this.bookingRelatives = entity.bookingRelatives;
+        }
     }
 }
+

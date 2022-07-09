@@ -468,7 +468,7 @@ export class SchedulesService {
             )
         }
 
-        const timeNow = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
+        const timeNow = new Date();
         console.log('timeNow', timeNow);
 
         const date = new Date(
@@ -487,10 +487,10 @@ export class SchedulesService {
             .createQueryBuilder('schedule')
             .update(ScheduleEntity)
             .set({ status: StatusSchedule.EXPIRED })
-            .where('time_start <= :timeNow AND status = :status AND date = :date', {
+            .where('time_start <= :timeNow AND status = :status AND date < :date', {
                 timeNow: timeNow,
                 status: StatusSchedule.ACTIVE,
-                date: date.getTime(),
+                date: timeNow.getTime(),
             })
             .execute();
 

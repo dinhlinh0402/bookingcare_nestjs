@@ -5,3 +5,8 @@ export enum BookingStatus {
     CANCEL = 'CANCEL',
     EXPIRED = 'EXPIRED',
 }
+
+export enum BookingType {
+    FOR_MYSELF = 'FOR_MYSELF',
+    FOR_RELATIVES = 'FOR_RELATIVES',
+}

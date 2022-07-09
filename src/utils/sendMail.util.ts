@@ -55,7 +55,7 @@ export const sendMail = async (to: string, subject: string, htmlContent: string)
     });
 
     const options = {
-        from: process.env.MAIL_USER,
+        from: process.env.ADMIN_EMAIL_ADDRESS,
         to: to,
         subject: subject,
         html: htmlContent
