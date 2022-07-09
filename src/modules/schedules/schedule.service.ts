@@ -502,9 +502,10 @@ export class SchedulesService {
                 status: StatusSchedule.ACTIVE,
             })
             .andWhere(
-                'schedule.date = :date AND schedule.time_start > :timeNow', {
+                'schedule.date = :date AND schedule.time_start > :timeNow AND schedule.doctor_id = :doctorId', {
                 date: date.getTime(),
                 timeNow: timeNow,
+                doctorId: pageOptionsDto.doctorId,
             })
 
         const [entities, pageMetaDto] = await queryBuilder.paginate(pageOptionsDto);
