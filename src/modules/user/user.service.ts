@@ -392,6 +392,8 @@ export class UserService {
             );
         }
 
+
+
         if (authUser.role == RoleEnum.MANAGER_CLINIC && user.role == RoleEnum.ADMIN) {
             throw new ErrorException(
                 HttpStatus.BAD_REQUEST,

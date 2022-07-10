@@ -27,8 +27,8 @@ export class DoctorInforDto extends AbstractDto {
     @ApiPropertyOptional({ enum: DoctorInforPosition })
     position: string;
 
-    @ApiPropertyOptional({ type: () => UserDto })
-    doctor: UserDto;
+    // @ApiPropertyOptional({ type: () => UserDto })
+    // doctor: UserDto;
 
     // @ApiPropertyOptional()
     // doctorId: string;
@@ -48,9 +48,9 @@ export class DoctorInforDto extends AbstractDto {
         this.note = entity.note;
         // this.doctorId = entity.doctorId;
 
-        if (entity.doctor) {
-            this.doctor = entity.doctor;
-        }
+        // if (entity.doctor) {
+        //     this.doctor = entity.doctor;
+        // }
 
         if (entity.creator) {
             this.creator = entity.creator;

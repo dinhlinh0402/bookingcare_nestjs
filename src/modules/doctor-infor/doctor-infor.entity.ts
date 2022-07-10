@@ -27,11 +27,11 @@ export class DoctorInforEntity extends AbstractEntity<DoctorInforDto> {
     @Column({ nullable: true })
     note: string;
 
-    @OneToOne(() => UserEntity, {
-        onDelete: 'CASCADE'
-    })
-    @JoinColumn()
-    doctor: UserEntity;
+    // @OneToOne(() => UserEntity, {
+    //     onDelete: 'CASCADE'
+    // })
+    // @JoinColumn()
+    // doctor: UserEntity;
 
     // @Column({ type: 'varchar', nullable: true, length: 36 })
     // doctorId: string;

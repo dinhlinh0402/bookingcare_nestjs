@@ -65,6 +65,7 @@ export class DoctorService {
     async getDoctorById(doctorId: string): Promise<UserEntity> {
         const doctor = await this.userRepo
             .createQueryBuilder('doctor')
+            .leftJoinAndSelect('doctor.doctorInfor', 'doctorInfor')
             .leftJoinAndSelect('doctor.clinic', 'clinic')
             .leftJoinAndSelect('doctor.specialty', 'specialty')
             .where(

@@ -42,8 +42,8 @@ export class DoctorInforService {
 
         const doctorInfor = this.doctorInforRepo.create({
             ...doctorInforData,
-            doctor: doctor,
-            // creator: authUser,
+            // doctor: doctor,
+            creator: authUser,
         })
 
         doctor.doctorInfor = doctorInfor;
