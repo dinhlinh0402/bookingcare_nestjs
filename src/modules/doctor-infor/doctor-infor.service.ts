@@ -56,7 +56,7 @@ export class DoctorInforService {
             where: {
                 id: doctorInforId,
             },
-            relations: ['creator', 'doctor']
+            relations: ['creator']
         })
 
         if (!doctorInfor) {
