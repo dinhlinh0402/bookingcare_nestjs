@@ -25,11 +25,11 @@ export class ClinicInforEntity extends AbstractEntity<ClinicInforDto> {
     @OneToOne(() => ClinicEntity, {
         onDelete: 'CASCADE'
     })
-    // @JoinColumn()
+    @JoinColumn()
     clinic: ClinicEntity;
 
-    @Column({ type: 'varchar', nullable: true, length: 36 })
-    clinicId: string;
+    // @Column({ type: 'varchar', nullable: true, length: 36 })
+    // clinicId: string;
 
     @ManyToOne(() => UserEntity)
     creator: UserEntity;

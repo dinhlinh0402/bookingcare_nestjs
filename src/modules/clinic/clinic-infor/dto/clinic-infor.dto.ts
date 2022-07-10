@@ -26,8 +26,8 @@ export class ClinicInforDto extends AbstractDto {
     @ApiPropertyOptional({ type: () => ClinicDto })
     clinic: ClinicDto;
 
-    @ApiPropertyOptional()
-    clinicId: string
+    // @ApiPropertyOptional()
+    // clinicId: string
 
     @ApiPropertyOptional({ type: () => UserDto })
     creator: UserDto;
@@ -40,7 +40,7 @@ export class ClinicInforDto extends AbstractDto {
         this.equipment = entity.equipment;
         this.location = entity.location;
         this.procedure = entity.procedure;
-        this.clinicId = entity.clinicId;
+        // this.clinicId = entity.clinicId;
 
         if (entity.clinic) {
             this.clinic = entity.clinic;

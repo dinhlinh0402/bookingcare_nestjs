@@ -194,6 +194,8 @@ export class ClinicService {
             );
         }
 
+        // const 
+
         await this.clinicRepo.delete(clinic.id);
         return true;
     }

@@ -26,7 +26,9 @@ export class ClinicEntity extends AbstractEntity<ClinicDto> {
     @Column({ default: false })
     active: boolean;
 
-    @OneToOne(() => ClinicInforEntity)
+    @OneToOne(() => ClinicInforEntity, {
+        onDelete: 'SET NULL'
+    })
     @JoinColumn()
     clinicInfor: ClinicInforEntity;
 
