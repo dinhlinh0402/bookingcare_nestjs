@@ -78,6 +78,7 @@ export class ClinicService {
             .createQueryBuilder('clinic')
             .leftJoinAndSelect('clinic.creator', 'creator')
             .leftJoinAndSelect('clinic.clinicInfor', 'clinicInfor')
+            .leftJoinAndSelect('clinic.specialties', 'specialties')
             .orderBy(`clinic.${clinicPageOptionsDto.orderBy}`, clinicPageOptionsDto.order)
 
         if (clinicPageOptionsDto.name) {
@@ -117,7 +118,7 @@ export class ClinicService {
 
     async getClinicById(clinicId: string): Promise<ClinicEntity> {
         const clinic = await this.clinicRepo.findOne({
-            relations: ['clinicInfor', 'creator'],
+            relations: ['clinicInfor', 'creator', 'specialties'],
             where: { id: clinicId }
         })
 

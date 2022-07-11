@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { AbstractDto } from "src/common/dto/abstract.dto";
+import { SpecialtyDto } from "src/modules/specialty/dto/specialty.dto";
 import { UserDto } from "src/modules/user/dto/user.dto";
 import { ClinicInforDto } from "../clinic-infor/dto/clinic-infor.dto";
 import { ClinicEntity } from "../clinic.entity";
@@ -26,6 +27,9 @@ export class ClinicDto extends AbstractDto {
     @ApiPropertyOptional({ type: () => ClinicInforDto })
     clinicInfor: ClinicInforDto;
 
+    @ApiPropertyOptional({ type: () => [SpecialtyDto] })
+    specialties: SpecialtyDto[];
+
     @ApiPropertyOptional({ type: () => UserDto })
     creator: UserDto;
 
@@ -44,6 +48,10 @@ export class ClinicDto extends AbstractDto {
         }
         if (entity.clinicInfor) {
             this.clinicInfor = entity.clinicInfor;
+        }
+
+        if (entity.specialties) {
+            this.specialties = entity.specialties.toDtos();
         }
     }
 }

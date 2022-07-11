@@ -69,6 +69,7 @@ export class BookingEntity extends AbstractEntity<BookingDto> {
     @Column({ type: 'longtext' })
     reason: string;
 
+    //One to many
     @OneToOne(() => BookingRelativesEntity, {
         onDelete: 'CASCADE'
     })
