@@ -40,11 +40,11 @@ export class BookingEntity extends AbstractEntity<BookingDto> {
     @Column({ type: 'enum', enum: BookingStatus, default: BookingStatus.WAITING })
     status: BookingStatus;
 
-    @Column()
-    token: string;
+    @Column({ comment: 'Ngày khám' })
+    date: Date;
 
-    @Column()
-    date: string;
+    @Column({ comment: 'Ngày đặt lịch' })
+    bookingDate: Date;
 
     @ManyToOne(() => UserEntity, {
         onDelete: 'SET NULL'
@@ -58,28 +58,32 @@ export class BookingEntity extends AbstractEntity<BookingDto> {
     @JoinColumn()
     patient: UserEntity;
 
-    @ManyToOne(() => UserEntity, {
-        onDelete: 'SET NULL'
+    @ManyToOne(() => ScheduleEntity, {
+        onDelete: 'CASCADE'
     })
+    @JoinColumn()
     schedule: ScheduleEntity;
-
-    @Column({ type: 'enum', enum: BookingType, default: BookingType.FOR_MYSELF })
-    type: BookingType;
 
     @Column({ type: 'longtext' })
     reason: string;
 
-    //One to many
+    @Column({ type: 'longtext', comment: 'user nhập lý do khi huỷ', nullable: true })
+    userNote: string;
+
+    @Column({ type: 'enum', enum: BookingType, default: BookingType.FOR_MYSELF })
+    type: BookingType;
+
+    // One to many
     @OneToOne(() => BookingRelativesEntity, {
         onDelete: 'CASCADE'
     })
     @JoinColumn()
     bookingRelatives: BookingRelativesEntity;
 
-    @ManyToOne(() => UserEntity, {
-        onDelete: 'SET NULL'
-    })
-    creator: UserEntity;
+    // @ManyToOne(() => UserEntity, {
+    //     onDelete: 'SET NULL'
+    // })
+    // creator: UserEntity;
 
     dtoClass = BookingDto;
 }

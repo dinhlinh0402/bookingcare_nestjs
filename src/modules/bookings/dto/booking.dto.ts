@@ -63,15 +63,19 @@ export class BookingDto extends AbstractDto {
     bookingRelatives: BookingRelativesDto;
 
     @ApiPropertyOptional()
-    date: string;
+    date: Date;
+
+    @ApiPropertyOptional()
+    bookingDate: Date;
 
     constructor(entity: BookingEntity) {
         super(entity);
 
         this.status = entity.status;
-        this.token = entity.token;
+        // this.token = entity.token;
         this.reason = entity.reason;
         this.date = entity.date;
+        this.bookingDate = entity.bookingDate;
         this.type = entity.type;
 
         if (entity.doctor) {

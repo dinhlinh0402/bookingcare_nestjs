@@ -29,7 +29,7 @@ export class UserCreateDto {
     @IsString()
     @IsNotEmpty()
     @IsEnum(GenderEnum)
-    @ApiProperty()
+    @ApiProperty({enum: GenderEnum})
     gender: GenderEnum;
 
     @IsEnum(RoleEnum)

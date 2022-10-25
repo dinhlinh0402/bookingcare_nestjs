@@ -34,6 +34,8 @@ export class SchedulesController {
         return schedules;
     }
 
+
+
     //update report-work
     @Put(':doctorId')
     @ApiBearerAuth()

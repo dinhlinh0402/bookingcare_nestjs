@@ -58,7 +58,11 @@ export const sendMail = async (to: string, subject: string, htmlContent: string)
         from: process.env.ADMIN_EMAIL_ADDRESS,
         to: to,
         subject: subject,
-        html: htmlContent
+        html: htmlContent,
+        // attachments: {
+        //     filename: 'test.png',
+        //     path: 'http://183.81.32.36:8000/uploads/image_2021-10-04_14-25-21-10740.png'
+        // }
     };
 
     return transporter.sendMail(options)

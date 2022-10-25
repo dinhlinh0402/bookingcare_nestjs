@@ -15,8 +15,8 @@ export class DoctorInforEntity extends AbstractEntity<DoctorInforDto> {
     @Column({ nullable: true, type: 'longtext', comment: 'Giới thiệu qua về bác sĩ' })
     introduct: string;
 
-    @Column({ default: 0, comment: 'Số người đã khám' })
-    count: number;
+    // @Column({ default: 0, comment: 'Số người đã khám' })
+    // count: number;
 
     @Column({ nullable: true, type: 'enum', enum: DoctorInforPayment })
     payment: DoctorInforPayment;

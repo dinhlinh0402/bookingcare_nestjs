@@ -15,10 +15,12 @@ import { BookingDto } from './dto/booking.dto';
 @ApiBearerAuth()
 
 // Tạm thời sẽ chỉ cho user đã đăng nhập được phép booking.
-export class BookingsController {
+export class BookingssController {
     constructor(
         private bookingsService: BookingsService,
     ) { }
+
+
 
     @Post()
     @UseGuards(JwtAuthGuard, PermissionGuard)
@@ -33,8 +35,9 @@ export class BookingsController {
         @Body() bookingCreateDto: BookingCreateDto
     ) {
         const bookAppointment = await this.bookingsService.createBooking(bookingCreateDto);
-        // return bookAppointment.toDto();
+        return bookAppointment.toDto();
     }
+
 
     @Put(':bookingId')
     @UseGuards(JwtAuthGuard)
@@ -53,7 +56,7 @@ export class BookingsController {
     }
 
     @Get()
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
         status: HttpStatus.OK,
@@ -64,6 +67,7 @@ export class BookingsController {
         @Query(new ValidationPipe({ transform: true }))
         bookingPageOptionsDto: BookingPageOptionsDto
     ) {
+        console.log('run');
 
     }
 

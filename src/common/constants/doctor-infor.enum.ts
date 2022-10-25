@@ -5,9 +5,9 @@ export enum DoctorInforPayment {
 }
 
 export enum DoctorInforPosition {
-    NONE = 'NONE',
-    MASTER = 'MASTER',
-    DOCTOR = 'DOCTOR',
-    ASSOCIATE_PROFESSOR = 'ASSOCIATE_PROFESSOR',
-    PROFESSOR = 'PROFESSOR',
+    NONE = 'NONE', // bác sĩ
+    MASTER = 'MASTER', // Thạc sĩ
+    DOCTOR = 'DOCTOR', // Tiến sĩ
+    ASSOCIATE_PROFESSOR = 'ASSOCIATE_PROFESSOR', // phó giáo sư
+    PROFESSOR = 'PROFESSOR', // giáo sư
 }

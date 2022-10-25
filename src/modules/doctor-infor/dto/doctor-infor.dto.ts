@@ -15,8 +15,8 @@ export class DoctorInforDto extends AbstractDto {
     @ApiPropertyOptional()
     introduct: string;
 
-    @ApiPropertyOptional()
-    count: number;
+    // @ApiPropertyOptional()
+    // count: number;
 
     @ApiPropertyOptional({ enum: DoctorInforPayment })
     payment;
@@ -42,7 +42,7 @@ export class DoctorInforDto extends AbstractDto {
         this.description = entity.description;
         this.price = entity.price;
         this.introduct = entity.introduct;
-        this.count = entity.count;
+        // this.count = entity.count;
         this.payment = entity.payment;
         this.position = entity.position;
         this.note = entity.note;

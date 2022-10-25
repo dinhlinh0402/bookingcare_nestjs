@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { BookingStatus, BookingType } from 'src/common/constants/booking.enum';
 import { CodeMessage } from 'src/common/constants/code-message';
 import { RoleEnum } from 'src/common/constants/role';
 import { StatusSchedule } from 'src/common/constants/schedule.enum';
@@ -6,7 +7,7 @@ import { ErrorException } from 'src/exceptions/error.exception';
 import { AuthService } from '../auth/auth.service';
 import { ScheduleRepository } from '../schedules/schedule.repository';
 import { UserRepository } from '../user/user.repository';
-import { BookingRepository } from './booking.repository';
+import { BookingRelativesRepository, BookingRepository } from './booking.repository';
 import { BookingCreateDto } from './dto/booking-data.dto';
 
 @Injectable()
@@ -15,10 +16,13 @@ export class BookingsService {
         public readonly bookingRepo: BookingRepository,
         public readonly userRepo: UserRepository,
         public readonly scheduleRepo: ScheduleRepository,
+        public readonly bookingRelativesRepo: BookingRelativesRepository
     ) { }
 
     async createBooking(bookingData: BookingCreateDto) {
         const authUser = AuthService.getAuthUser();
+        console.log('bookingdata: ', bookingData);
+
 
         const doctor = await this.userRepo.findOne({
             where: {
@@ -36,7 +40,7 @@ export class BookingsService {
 
         const patient = await this.userRepo.findOne({
             where: {
-                id: bookingData.doctorId,
+                id: authUser.id,
                 role: RoleEnum.USER,
             }
         })
@@ -48,9 +52,10 @@ export class BookingsService {
             )
         }
 
-        const schedule = await this.userRepo.findOne({
+        const schedule = await this.scheduleRepo.findOne({
             where: {
                 id: bookingData.scheduleId,
+                doctor: bookingData.doctorId,
                 status: StatusSchedule.ACTIVE,
             }
         })
@@ -63,6 +68,77 @@ export class BookingsService {
         }
 
         console.log('schedule: ', schedule);
+
+        // Đếm số lượng đã book
+        const countBooking = await this.bookingRepo.createQueryBuilder('booking')
+            .where('booking.schedule_id = :scheduleId AND booking.doctor_id = :doctorId', {
+                scheduleId: bookingData.scheduleId,
+                doctorId: bookingData.doctorId,
+            })
+            .getCount();
+
+        if (countBooking === schedule.maxCount || countBooking >= schedule.maxCount) {
+            throw new ErrorException(
+                HttpStatus.BAD_REQUEST,
+                CodeMessage.MAXIMUN_COUNT,
+            );
+        }
+
+        const checkBooking = await this.bookingRepo.findOne({
+            where: {
+                doctor: bookingData.doctorId,
+                schedule: bookingData.scheduleId,
+                type: bookingData.type,
+                patient: authUser.id,
+            }
+        })
+        console.log('checkBooking', checkBooking);
+        if (checkBooking) {
+            throw new ErrorException(
+                HttpStatus.BAD_REQUEST,
+                CodeMessage.YOU_HAVE_BOOKED,
+            );
+        }
+
         // for relatives for myself
+        let booking;
+        if (bookingData.type === BookingType.FOR_MYSELF) {
+            booking = this.bookingRepo.create({
+                status: BookingStatus.WAITING,
+                date: bookingData.date,
+                bookingDate: bookingData.bookingDate,
+                doctor: doctor,
+                patient: patient,
+                schedule: schedule,
+                reason: bookingData.reason,
+                type: bookingData.type,
+            })
+            await this.bookingRepo.save(booking);
+        } else {
+            const booking_relatives = this.bookingRelativesRepo.create({
+                name: bookingData.name,
+                email: bookingData.email,
+                phone: bookingData.phone,
+                gender: bookingData.gender,
+                birthday: bookingData.birthday || null,
+                address: bookingData.address
+            })
+            const savebookingRelatives = await this.bookingRelativesRepo.save(booking_relatives);
+
+            booking = this.bookingRepo.create({
+                status: BookingStatus.WAITING,
+                date: bookingData.date,
+                bookingDate: bookingData.bookingDate,
+                doctor: doctor,
+                patient: patient,
+                schedule: schedule,
+                reason: bookingData.reason,
+                type: bookingData.type,
+                bookingRelatives: savebookingRelatives,
+            })
+            await this.bookingRepo.save(booking);
+        }
+
+        return booking;
     }
 }

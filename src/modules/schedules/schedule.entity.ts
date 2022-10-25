@@ -19,6 +19,9 @@ export class ScheduleEntity extends AbstractEntity<ScheduleDto> {
     @Column()
     date: string;
 
+    @Column({ default: 1, comment: 'số lượng bệnh nhân trong thời gian đó' })
+    maxCount: number;
+
     @ManyToOne(() => UserEntity)
     doctor: UserEntity;
 

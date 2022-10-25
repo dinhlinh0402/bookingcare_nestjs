@@ -9,15 +9,25 @@ export class BookingCreateDto {
     @ApiProperty()
     doctorId: string;
 
-    @IsUUID('4')
-    @IsNotEmpty()
-    @ApiProperty()
-    patientId: string;
+    // @IsUUID('4')
+    // @IsNotEmpty()
+    // @ApiProperty()
+    // patientId: string;
 
     @IsUUID('4')
     @IsNotEmpty()
     @ApiProperty()
     scheduleId: string;
+
+    @IsDateString()
+    @IsNotEmpty()
+    @ApiProperty()
+    date: Date;
+
+    @IsDateString()
+    @IsNotEmpty()
+    @ApiProperty()
+    bookingDate: Date;
 
     @IsString()
     @IsNotEmpty()
@@ -50,12 +60,12 @@ export class BookingCreateDto {
     gender: GenderEnum;
 
     @IsDateString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiPropertyOptional()
     birthday: Date;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiPropertyOptional()
     address: string;
 }

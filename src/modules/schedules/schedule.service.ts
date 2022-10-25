@@ -97,7 +97,7 @@ export class SchedulesService {
                 23,
                 59,
                 60
-            ) ,
+            ),
         )
 
         // const date = new Date(
@@ -249,6 +249,7 @@ export class SchedulesService {
                 timeStart: timeStart,
                 timeEnd: timeEnd,
                 date: date.getTime().toString(),
+                maxCount: scheduleData.maxCount,
             })
 
             await this.scheduleRepo.save(schedule);
@@ -305,7 +306,7 @@ export class SchedulesService {
                 23,
                 59,
                 60
-            ) ,
+            ),
         )
         const today = new Date();
 
@@ -444,6 +445,7 @@ export class SchedulesService {
                 timeStart: timeStart,
                 timeEnd: timeEnd,
                 date: date.getTime().toString(),
+                maxCount: scheduleData.maxCount,
             })
 
             await this.scheduleRepo.save(schedule);
@@ -471,6 +473,7 @@ export class SchedulesService {
         const timeNow = new Date();
         console.log('timeNow', timeNow);
 
+        // convert về đầu ngày vd 2022-10-19T00:00:00.822Z
         const date = new Date(
             Date.UTC(
                 new Date(pageOptionsDto.date).getFullYear(),
@@ -479,7 +482,7 @@ export class SchedulesService {
                 23,
                 59,
                 60
-            ) ,
+            ),
         )
         console.log('date: ', date.getTime());
 

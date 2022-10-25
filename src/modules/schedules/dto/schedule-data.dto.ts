@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform, Type } from "class-transformer";
-import { IsArray, IsDate, IsDateString, IsEnum, IsNotEmpty, IsOptional, IsUUID, ValidateNested } from "class-validator";
+import { IsArray, IsDate, IsDateString, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsUUID, Min, ValidateNested } from "class-validator";
 
 export class ScheduleTime {
     @IsDateString()
@@ -25,6 +25,13 @@ export class ScheduleCreateDto {
     @ApiProperty()
     date: Date;
 
+    @IsNumber()
+    @Min(1)
+    @IsNotEmpty()
+    @Type(() => Number)
+    @ApiProperty()
+    maxCount: number;
+
     @ApiProperty({
         type: [ScheduleTime],
         description: 'Schedule times'
@@ -40,6 +47,13 @@ export class ScheduleUpdateDto {
     @IsNotEmpty()
     @ApiProperty()
     date: Date;
+
+    @IsNumber()
+    @Min(1)
+    @IsNotEmpty()
+    @Type(() => Number)
+    @ApiProperty()
+    maxCount: number;
 
     @ApiProperty({
         type: [ScheduleTime],

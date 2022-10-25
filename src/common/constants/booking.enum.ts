@@ -4,6 +4,9 @@ export enum BookingStatus {
     DONE = 'DONE',
     CANCEL = 'CANCEL',
     EXPIRED = 'EXPIRED',
+    NOT_COME = 'NOT_COME', // không đến
+    UNABLE_CONTACT = 'UNABLE_CONTACT', // không liên lạc được
+
 }
 
 export enum BookingType {
