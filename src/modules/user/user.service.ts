@@ -261,7 +261,7 @@ export class UserService {
 
         if (optionsDto.specialtyIds && optionsDto.specialtyIds.length) {
             queryBuilder.andWhere(
-                'user.specialty IN (:specialtyIds)', {
+                'user.specialty IN (: specialtyIds)', {
                 specialtyIds: optionsDto.specialtyIds,
             })
         }
