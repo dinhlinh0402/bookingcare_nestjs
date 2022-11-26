@@ -61,6 +61,9 @@ export class UserEntity extends AbstractEntity<UserDto> {
     @Column({ nullable: true })
     avatar: string;
 
+    @Column({ nullable: true, default: 1, comment: 'trạng thái' })
+    status: boolean;
+
     @OneToOne(() => DoctorInforEntity)
     @JoinColumn()
     doctorInfor: DoctorInforEntity;

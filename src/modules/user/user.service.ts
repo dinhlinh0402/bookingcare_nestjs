@@ -3,7 +3,7 @@ import { RoleEnum } from 'src/common/constants/role';
 import { IFile } from 'src/common/interfaces/file.interface';
 import { UtilsService } from 'src/providers/util.service';
 import { sendMail } from 'src/utils/sendMail.util';
-import { FindOneOptions } from 'typeorm';
+import { Brackets, FindOneOptions } from 'typeorm';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CodeMessage } from '../../common/constants/code-message';
 import { ErrorException } from '../../exceptions/error.exception';
@@ -177,6 +177,8 @@ export class UserService {
         const queryBuilder = this.userRepo
             .createQueryBuilder('user')
             .leftJoinAndSelect('user.creator', 'creator')
+            .leftJoinAndSelect('user.clinic', 'clinic')
+            .leftJoinAndSelect('user.specialty', 'specialty')
             .orderBy(`user.${optionsDto.orderBy}`, optionsDto.order)
 
         if (optionsDto.name) {
@@ -236,12 +238,49 @@ export class UserService {
                 clinicId: optionsDto.clinicId
             })
         }
-        if (optionsDto.role) {
+        if (optionsDto.role && optionsDto.role.length) {
             queryBuilder.andWhere(
-                'user.role = :role', {
+                'user.role IN (:role)', {
                 role: optionsDto.role
             })
         }
+
+        if (optionsDto.status && optionsDto.status.length) {
+            queryBuilder.andWhere(
+                'user.status IN (:status)', {
+                status: optionsDto.status
+            })
+        }
+
+        if (optionsDto.clinicIds && optionsDto.clinicIds.length) {
+            queryBuilder.andWhere(
+                'user.clinic IN (:clinicIds)', {
+                clinicIds: optionsDto.clinicIds,
+            })
+        }
+
+        if (optionsDto.specialtyIds && optionsDto.specialtyIds.length) {
+            queryBuilder.andWhere(
+                'user.specialty IN (:specialtyIds)', {
+                specialtyIds: optionsDto.specialtyIds,
+            })
+        }
+
+        // Thếu search q
+        if (optionsDto.q) {
+            queryBuilder
+                .andWhere(
+                    new Brackets((qb) =>
+                        qb
+                            .where("REPLACE(CONCAT(COALESCE(user.first_name, ''), ' ', COALESCE(user.middle_name, ''), ' ', COALESCE(user.last_name,'')), '  ', ' ') LIKE :q")
+                            .orWhere("clinic.name LIKE :q")
+                            .orWhere("specialty.name LIKE :q")
+                            .orWhere("user.phoneNumber LIKE :q")
+                    ),
+                )
+                .setParameter('q', `%${optionsDto.q}%`);
+        }
+
         console.log(await queryBuilder.getMany());
 
         const [entities, pageMetaDto] = await queryBuilder.paginate(optionsDto);

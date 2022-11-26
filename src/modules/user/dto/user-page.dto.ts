@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
+import { Transform, Type } from "class-transformer";
+import { IsArray, IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, Min, MinLength, ValidateNested } from "class-validator";
 import { GenderEnum } from "src/common/constants/gender";
 import { RoleEnum } from "src/common/constants/role";
 import { PageMetaDto } from "src/common/dto/page-meta.dto";
@@ -68,6 +69,12 @@ export class UsersPageOptionsDto extends PageOptionsDto {
     phone: string;
 
     @ApiPropertyOptional()
+    @IsDateString()
+    @IsNotEmpty()
+    @IsOptional()
+    birthday: Date;
+
+    @ApiPropertyOptional()
     @IsString()
     @IsNotEmpty()
     @IsOptional()
@@ -85,13 +92,71 @@ export class UsersPageOptionsDto extends PageOptionsDto {
     @IsOptional()
     clinicId: string;
 
+    // @ApiPropertyOptional({
+    //     type: String,
+    //     enum: RoleEnum,
+    //     required: false,
+    //     description: 'Role'
+    // })
+    // @IsEnum(RoleEnum)
+    // @IsOptional()
+    // role: RoleEnum;
+
     @ApiPropertyOptional({
-        type: String,
-        enum: RoleEnum,
+        required: false,
+        description: 'Role'
+    })
+    @IsOptional()
+    @IsArray()
+    @IsEnum(RoleEnum, { each: true })
+    // @ValidateNested({ each: true })
+    // @IsString({ each: true })
+    @Type(() => Role)
+    @Transform(({ value }) => {
+        return typeof value === 'string' ? [value] : value;
+    })
+    role: Role[];
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsArray()
+    @IsBoolean({ each: true })
+    @Type(() => String)
+    @Transform(({ value }) => {
+        const newValue = typeof value === 'string' ? [value] : value;
+        return newValue.map(item => ['1', 1, 'true', true].includes(item))
+    })
+    status: boolean[];
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsArray()
+    @IsUUID('4', { each: true })
+    @Type(() => String)
+    @Transform(({ value }) => {
+        return typeof value === 'string' ? [value] : value;
+    })
+    clinicIds: string[];
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsArray()
+    @IsUUID('4', { each: true })
+    @Type(() => String)
+    @Transform(({ value }) => {
+        return typeof value === 'string' ? [value] : value;
+    })
+    specialtyIds: string[];
+}
+
+export class Role {
+    @ApiPropertyOptional({
+        // type: [Role],
+        // enum: RoleEnum,
         required: false,
         description: 'Role'
     })
     @IsEnum(RoleEnum)
     @IsOptional()
-    role: RoleEnum;
+    role1: RoleEnum;
 }

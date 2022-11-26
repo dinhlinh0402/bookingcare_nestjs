@@ -56,6 +56,9 @@ export class UserDto extends AbstractDto {
     @ApiPropertyOptional()
     avatar: string;
 
+    @ApiPropertyOptional()
+    status: boolean;
+
     @ApiPropertyOptional({ type: () => ClinicDto })
     clinic: ClinicDto;
 
@@ -81,6 +84,7 @@ export class UserDto extends AbstractDto {
         this.phoneNumber = entity.phoneNumber;
         this.gender = entity.gender;
         this.avatar = entity.avatar;
+        this.status = entity.status;
         this.nation = entity.nation;
         this.religion = entity.religion;
         this.role = entity.role;

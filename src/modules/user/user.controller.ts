@@ -16,8 +16,8 @@ import { UserService } from './user.service';
 
 @Controller('user')
 @ApiTags('User')
-@ApiBearerAuth()
-@UseInterceptors(AuthUserInterceptor)
+// @ApiBearerAuth()
+// @UseInterceptors(AuthUserInterceptor)
 export class UserController {
     constructor(private userService: UserService) { }
 
@@ -72,9 +72,24 @@ export class UserController {
         return user.toDto();
     }
 
+    @Get('test')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get list user paging',
+        type: UsersPageDto,
+    })
+    async getUsersTest(
+        @Query(new ValidationPipe({ transform: true }))
+        pageOptionsDto: UsersPageOptionsDto
+    ) {
+        console.log('pageOptionsDto', pageOptionsDto);
+        // return this.userService.getUsersTest(pageOptionsDto)
+    }
+
     @Get()
-    @UseGuards(JwtAuthGuard, PermissionGuard)
-    @Permissions('admin', 'manager_clinic')
+    // @UseGuards(JwtAuthGuard, PermissionGuard)
+    // @Permissions('admin', 'manager_clinic')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
@@ -85,6 +100,7 @@ export class UserController {
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: UsersPageOptionsDto
     ): Promise<UsersPageDto> {
+        // console.log('pageOptionsDto', pageOptionsDto);
         return this.userService.getUsers(pageOptionsDto)
     }
 
@@ -103,6 +119,8 @@ export class UserController {
         const user = await this.userService.getUserById(userId);
         return user.toDto();
     }
+
+
 
     @Put(':userId')
     @UseGuards(JwtAuthGuard, PermissionGuard)
