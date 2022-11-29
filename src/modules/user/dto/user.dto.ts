@@ -83,6 +83,7 @@ export class UserDto extends AbstractDto {
         this.address = entity.address;
         this.phoneNumber = entity.phoneNumber;
         this.gender = entity.gender;
+        this.birthday = entity.birthday;
         this.avatar = entity.avatar;
         this.status = entity.status;
         this.nation = entity.nation;
