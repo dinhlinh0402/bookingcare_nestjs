@@ -79,6 +79,7 @@ export class ClinicService {
             .leftJoinAndSelect('clinic.creator', 'creator')
             .leftJoinAndSelect('clinic.clinicInfor', 'clinicInfor')
             .leftJoinAndSelect('clinic.specialties', 'specialties')
+            .where('clinic.active = true')
             .orderBy(`clinic.${clinicPageOptionsDto.orderBy}`, clinicPageOptionsDto.order)
 
         if (clinicPageOptionsDto.name) {
