@@ -155,6 +155,7 @@ export class UserUpdateStatus {
     @ArrayMinSize(1)
     @IsNotEmpty()
     @Type(() => String)
+    @ApiProperty()
     userIds: string[];
 }
 
@@ -164,5 +165,6 @@ export class UserDelete {
     @ArrayMinSize(1)
     @IsNotEmpty()
     @Type(() => String)
+    @ApiProperty()
     userIds: string[];
 }

@@ -111,6 +111,7 @@ export class UserController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Update status user, admin, manager clinic, doctor',
+        type: Boolean
     })
 
     async updateStatusUser(
