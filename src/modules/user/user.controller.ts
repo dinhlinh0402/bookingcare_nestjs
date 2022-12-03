@@ -9,15 +9,15 @@ import { ErrorException } from 'src/exceptions/error.exception';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { PermissionGuard } from 'src/guards/permission.guard';
 import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
-import { UserCreateDto, UserUpdateDto } from './dto/user-data.dto';
+import { UserCreateDto, UserDelete, UserUpdateDto, UserUpdateStatus } from './dto/user-data.dto';
 import { UsersPageDto, UsersPageOptionsDto } from './dto/user-page.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
 @ApiTags('User')
-@ApiBearerAuth()
-@UseInterceptors(AuthUserInterceptor)
+// @ApiBearerAuth()
+// @UseInterceptors(AuthUserInterceptor)
 export class UserController {
     constructor(private userService: UserService) { }
 
@@ -74,7 +74,7 @@ export class UserController {
 
     @Get()
     @UseGuards(JwtAuthGuard, PermissionGuard)
-    @Permissions('admin', 'manager_clinic')
+    @Permissions('admin', 'manager_clinic', 'HEAD_OF_DOCTOR')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
@@ -105,10 +105,25 @@ export class UserController {
         return user.toDto();
     }
 
+    @Put('change-status')
+    @UseGuards(JwtAuthGuard, PermissionGuard)
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Update status user, admin, manager clinic, doctor',
+    })
+
+    async updateStatusUser(
+        @Body() userUpdateStatusDto: UserUpdateStatus,
+    ): Promise<boolean> {
+        return await this.userService.updateStatusUser(userUpdateStatusDto);
+    }
+
 
 
     @Put(':userId')
     @UseGuards(JwtAuthGuard, PermissionGuard)
+    @Permissions('admin', 'manager_clinic', 'HEAD_OF_DOCTOR')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
@@ -156,20 +171,36 @@ export class UserController {
         return user.toDto();
     }
 
-    @Delete(':userId')
+    @Delete()
     @UseGuards(JwtAuthGuard, PermissionGuard)
-    @Permissions('admin', 'manager_clinic')
+    @Permissions('admin', 'manager_clinic', 'HEAD_OF_DOCTOR')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: 200,
-        description: 'Delete user',
+        description: 'Delete many user',
         type: Boolean,
     })
     async deleteUser(
-        @Param('userId') userId: string
+        @Body() dataUser: UserDelete,
+        // @Param('userId') userId: string
     ): Promise<boolean> {
-        return await this.userService.deleteUser(userId);
+        return await this.userService.deleteUser(dataUser.userIds);
     }
+
+    // @Delete(':userId')
+    // @UseGuards(JwtAuthGuard, PermissionGuard)
+    // @Permissions('admin', 'manager_clinic')
+    // @HttpCode(HttpStatus.OK)
+    // @ApiResponse({
+    //     status: 200,
+    //     description: 'Delete user',
+    //     type: Boolean,
+    // })
+    // async deleteUser(
+    //     @Param('userId') userId: string
+    // ): Promise<boolean> {
+    //     return await this.userService.deleteUser(userId);
+    // }
 
     @Post('change-avatar')
     @UseGuards(JwtAuthGuard)

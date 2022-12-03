@@ -3,7 +3,7 @@ import { RoleEnum } from 'src/common/constants/role';
 import { IFile } from 'src/common/interfaces/file.interface';
 import { UtilsService } from 'src/providers/util.service';
 import { sendMail } from 'src/utils/sendMail.util';
-import { Brackets, FindOneOptions } from 'typeorm';
+import { Brackets, FindOneOptions, In } from 'typeorm';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CodeMessage } from '../../common/constants/code-message';
 import { ErrorException } from '../../exceptions/error.exception';
@@ -11,7 +11,7 @@ import { AuthService } from '../auth/auth.service';
 import { UserRegisterDto } from '../auth/dto/user-register.dto';
 import { ClinicRepository } from '../clinic/clinic.repository';
 import { SpecialtyRepository } from '../specialty/specialty.repository';
-import { UserCreateDto, UserUpdateDto } from './dto/user-data.dto';
+import { UserCreateDto, UserDelete, UserUpdateDto, UserUpdateStatus } from './dto/user-data.dto';
 import { UsersPageDto, UsersPageOptionsDto } from './dto/user-page.dto';
 import { newUserMailTemplate, newUserSubject } from './mail.template';
 import { UserEntity } from './user.entity';
@@ -417,7 +417,7 @@ export class UserService {
     }
 
     @Transactional()
-    async deleteUser(userId: string): Promise<boolean> {
+    async deleteUserOne(userId: string): Promise<boolean> {
         const authUser = AuthService.getAuthUser();
 
         const user = await this.userRepo.findOne({
@@ -465,4 +465,60 @@ export class UserService {
         await this.userRepo.save(authUser);
         return authUser;
     }
+
+    async updateStatusUser(dataUpdatseStatus: UserUpdateStatus) {
+        const user = await this.userRepo.find({
+            select: ['id'],
+            where: {
+                id: In(dataUpdatseStatus.userIds)
+            }
+        })
+
+        if (dataUpdatseStatus.userIds.length > user.length) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.USER_NOT_EXIST,
+            );
+        }
+
+        await this.userRepo.update(
+            { id: In(dataUpdatseStatus.userIds) },
+            { status: dataUpdatseStatus.status }
+        )
+        // Different ways
+        // await this.userRepo
+        //     .createQueryBuilder()
+        //     .update('user')
+        //     .set({ status: dataUpdatseStatus.status })
+        //     .where({ id: In(dataUpdatseStatus.userIds) })
+        //     .execute();
+
+        return true;
+    }
+
+    async deleteUser(userIds: string[]) {
+        const user = await this.userRepo.find({
+            select: ['id'],
+            where: {
+                id: In(userIds)
+            }
+        })
+        if (userIds.length > user.length) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.USER_NOT_EXIST,
+            );
+        }
+
+        await this.userRepo.delete(userIds);
+        // await this.userRepo
+        //     .createQueryBuilder()
+        //     .delete()
+        //     .from('user')
+        //     .where({ id: In(userIds) })
+        //     .execute();
+
+        return true
+    }
 }
+
