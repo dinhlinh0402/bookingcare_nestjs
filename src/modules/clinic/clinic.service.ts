@@ -79,7 +79,7 @@ export class ClinicService {
             .leftJoinAndSelect('clinic.creator', 'creator')
             .leftJoinAndSelect('clinic.clinicInfor', 'clinicInfor')
             .leftJoinAndSelect('clinic.specialties', 'specialties')
-            .where('clinic.active = true')
+            // .where('clinic.active = true')
             .orderBy(`clinic.${clinicPageOptionsDto.orderBy}`, clinicPageOptionsDto.order)
 
         if (clinicPageOptionsDto.name) {
@@ -90,14 +90,12 @@ export class ClinicService {
             )
         }
 
-        if (clinicPageOptionsDto.active != undefined) {
-            console.log(clinicPageOptionsDto.active);
-
+        // if (clinicPageOptionsDto.active != undefined) {
+        if (clinicPageOptionsDto.active && clinicPageOptionsDto.active.length) {
             queryBuilder.andWhere(
-                'clinic.active = :active', {
+                'clinic.active IN (:active)', {
                 active: clinicPageOptionsDto.active
-            }
-            )
+            })
         }
 
         if (clinicPageOptionsDto.email) {
