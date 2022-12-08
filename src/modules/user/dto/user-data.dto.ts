@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform, Type } from "class-transformer";
-import { ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID, Min, MinLength } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEmail, IsEmpty, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID, Min, MinLength } from "class-validator";
 import { GenderEnum } from "src/common/constants/gender";
 import { RoleEnum } from "src/common/constants/role";
 
@@ -17,7 +17,7 @@ export class UserCreateDto {
     firstName: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     middleName: string;
@@ -42,31 +42,32 @@ export class UserCreateDto {
     role: RoleEnum;
 
     @IsDateString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     birthday: Date;
 
     @IsString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     address: string;
 
     @IsPhoneNumber('VN')
     @IsString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     phoneNumber: string;
 
     @IsUUID('4')
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     clinicId: string;
 
     @IsUUID('4')
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     specialtyId: string;
@@ -76,25 +77,25 @@ export class UserCreateDto {
 export class UserUpdateDto {
     @IsString()
     @IsEmail()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     email: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     firstName: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     middleName: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     lastName: string;
@@ -114,25 +115,25 @@ export class UserUpdateDto {
     role: RoleEnum;
 
     @IsDateString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     birthday: Date;
 
     @IsString()
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     address: string;
 
     @IsPhoneNumber('VN')
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     phoneNumber: string;
 
     @IsUUID('4')
-    @IsNotEmpty()
+    @IsEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     clinicId: string;
