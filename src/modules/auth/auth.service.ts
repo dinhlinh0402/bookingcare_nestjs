@@ -78,7 +78,7 @@ export class AuthService {
 
         const isPasswordValid = await UtilsService.validateHash(userChangePassword.currentPassword, authUser.password);
 
-        console.log('isPasswordValid', isPasswordValid);
+        // console.log('isPasswordValid', isPasswordValid);
 
         if (!isPasswordValid) {
             throw new ErrorException(
@@ -127,7 +127,7 @@ export class AuthService {
         try {
             await sendMail(email, resetPasswordSubject, mailContent)
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             throw new ErrorException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 CodeMessage.CAN_NOT_SEND_MAIL_TO_USER,

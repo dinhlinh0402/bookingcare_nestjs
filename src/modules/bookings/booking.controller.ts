@@ -67,7 +67,7 @@ export class BookingssController {
         @Query(new ValidationPipe({ transform: true }))
         bookingPageOptionsDto: BookingPageOptionsDto
     ) {
-        console.log('run');
+        // console.log('run');
 
     }
 

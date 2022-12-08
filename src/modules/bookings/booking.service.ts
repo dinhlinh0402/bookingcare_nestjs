@@ -21,7 +21,7 @@ export class BookingsService {
 
     async createBooking(bookingData: BookingCreateDto) {
         const authUser = AuthService.getAuthUser();
-        console.log('bookingdata: ', bookingData);
+        // console.log('bookingdata: ', bookingData);
 
 
         const doctor = await this.userRepo.findOne({
@@ -67,7 +67,7 @@ export class BookingsService {
             )
         }
 
-        console.log('schedule: ', schedule);
+        // console.log('schedule: ', schedule);
 
         // Đếm số lượng đã book
         const countBooking = await this.bookingRepo.createQueryBuilder('booking')
@@ -92,7 +92,7 @@ export class BookingsService {
                 patient: authUser.id,
             }
         })
-        console.log('checkBooking', checkBooking);
+        // console.log('checkBooking', checkBooking);
         if (checkBooking) {
             throw new ErrorException(
                 HttpStatus.BAD_REQUEST,

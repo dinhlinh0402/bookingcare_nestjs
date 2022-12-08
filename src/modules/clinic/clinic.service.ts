@@ -73,7 +73,7 @@ export class ClinicService {
     async getClinics(
         clinicPageOptionsDto: ClinicPageOptionsDto
     ): Promise<ClinicPageDto> {
-        console.log(clinicPageOptionsDto);
+        // console.log(clinicPageOptionsDto);
         const queryBuilder = this.clinicRepo
             .createQueryBuilder('clinic')
             .leftJoinAndSelect('clinic.creator', 'creator')

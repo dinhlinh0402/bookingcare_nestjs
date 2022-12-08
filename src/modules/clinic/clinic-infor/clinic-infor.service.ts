@@ -69,7 +69,7 @@ export class ClinicInforService {
         let clinicInfor = await this.clinicInforRepo.findOne({
             where: { id: clinicInforId },
         })
-        console.log('clinicInfor: ', clinicInfor);
+        // console.log('clinicInfor: ', clinicInfor);
 
         if (!clinicInfor) {
             throw new ErrorException(
@@ -88,7 +88,7 @@ export class ClinicInforService {
         const clinicInfor = await this.clinicInforRepo.findOne({
             where: { id: clinicInforId },
         })
-        console.log('clinicInfor: ', clinicInfor);
+        // console.log('clinicInfor: ', clinicInfor);
 
         if (!clinicInfor) {
             throw new ErrorException(

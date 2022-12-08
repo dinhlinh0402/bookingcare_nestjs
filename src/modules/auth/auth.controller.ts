@@ -30,11 +30,11 @@ export class AuthController {
         @Body() userLoginDto: UserLoginDto,
     ): Promise<LoginPayloadDto> {
         //77117446
-        console.log(userLoginDto);
+        // console.log(userLoginDto);
         const userEntity = await this.authService.validateUser(userLoginDto);
-        console.log(userEntity);
+        // console.log(userEntity);
 
-        console.log(userEntity);
+        // console.log(userEntity);
 
         const token = await this.authService.createToken(userEntity);
         console.log(token);

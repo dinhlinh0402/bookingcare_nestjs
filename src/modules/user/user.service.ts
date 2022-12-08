@@ -40,6 +40,7 @@ export class UserService {
     @Transactional()
     async createUser(userCreateDto: UserCreateDto, file: IFile): Promise<UserEntity> {
         const authUser = AuthService.getAuthUser();
+
         if (await this.isUserExist(userCreateDto.email)) {
             throw new ErrorException(
                 HttpStatus.CONFLICT,
@@ -173,6 +174,7 @@ export class UserService {
 
     async getUsers(optionsDto: UsersPageOptionsDto): Promise<UsersPageDto> {
         const user = AuthService.getAuthUser();
+        console.log('user: ', user);
 
         const queryBuilder = this.userRepo
             .createQueryBuilder('user')
@@ -281,7 +283,7 @@ export class UserService {
                 .setParameter('q', `%${optionsDto.q}%`);
         }
 
-        console.log(await queryBuilder.getMany());
+        // console.log(await queryBuilder.getMany());
 
         const [entities, pageMetaDto] = await queryBuilder.paginate(optionsDto);
 

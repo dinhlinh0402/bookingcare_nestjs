@@ -144,7 +144,7 @@ export class SchedulesService {
                     59
                 )
             )
-            console.log('checkTimeStart: ', checkTimeStart.getTime());
+            // console.log('checkTimeStart: ', checkTimeStart.getTime());
 
             const checkTimeEnd = new Date(
                 Date.UTC(
