@@ -17,7 +17,7 @@ export class UserCreateDto {
     firstName: string;
 
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     middleName: string;
@@ -34,6 +34,7 @@ export class UserCreateDto {
     gender: GenderEnum;
 
     @IsEnum(RoleEnum)
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional({
         enum: RoleEnum,
@@ -42,32 +43,32 @@ export class UserCreateDto {
     role: RoleEnum;
 
     @IsDateString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     birthday: Date;
 
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     address: string;
 
     @IsPhoneNumber('VN')
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     phoneNumber: string;
 
     @IsUUID('4')
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     clinicId: string;
 
     @IsUUID('4')
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     specialtyId: string;
@@ -77,25 +78,25 @@ export class UserCreateDto {
 export class UserUpdateDto {
     @IsString()
     @IsEmail()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     email: string;
 
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     firstName: string;
 
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     middleName: string;
 
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     lastName: string;
@@ -115,30 +116,31 @@ export class UserUpdateDto {
     role: RoleEnum;
 
     @IsDateString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     birthday: Date;
 
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     address: string;
 
     @IsPhoneNumber('VN')
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     phoneNumber: string;
 
     @IsUUID('4')
-    @IsEmpty()
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     clinicId: string;
 
     @IsUUID('4')
+    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     specialtyId: string;
