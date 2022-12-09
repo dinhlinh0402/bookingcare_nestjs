@@ -9,7 +9,7 @@ import { SpecialtyPageDto, SpecialtyPageOptionsDto } from './dto/specialty-page'
 import { SpecialtyEntity } from './specialty.entity';
 import { SpecialtyRepository } from './specialty.repository';
 import { ClinicRepository } from '../clinic/clinic.repository';
-import { Brackets } from 'typeorm';
+import { Brackets, In } from 'typeorm';
 
 @Injectable()
 export class SpecialtyService {
@@ -57,7 +57,7 @@ export class SpecialtyService {
         }
 
         if (pageOptionsData.q) {
-            queryBuilder.searchByString(pageOptionsData.q, ['specialty.name', 'specialty.description']);
+            queryBuilder.searchByString(pageOptionsData.q, ['specialty.name']);
         }
         const [entities, pageMetaData] = await queryBuilder.paginate(pageOptionsData);
 
@@ -120,6 +120,22 @@ export class SpecialtyService {
         }
 
         const deleteSpecialty = await this.specialtyRepo.delete(specialty.id);
+        return deleteSpecialty ? true : false;
+    }
+
+    async deleteManySpecialty(specialtyIds: string[]): Promise<boolean> {
+        let listSpecialty = await this.specialtyRepo.find({
+            select: ['id'],
+            where: { id: In(specialtyIds) },
+        })
+        if (listSpecialty.length < specialtyIds.length) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.SPECIALTY_NOT_EXIST,
+            );
+        }
+
+        const deleteSpecialty = await this.specialtyRepo.delete(specialtyIds);
         return deleteSpecialty ? true : false;
     }
 

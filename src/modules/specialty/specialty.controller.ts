@@ -9,7 +9,7 @@ import { ErrorException } from 'src/exceptions/error.exception';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { PermissionGuard } from 'src/guards/permission.guard';
 import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
-import { SpecialtyCreateDto, SpecialtyUpdateDto } from './dto/specialty-data';
+import { SpecialtyCreateDto, SpecialtyDelete, SpecialtyUpdateDto } from './dto/specialty-data';
 import { SpecialtyPageDto, SpecialtyPageOptionsDto } from './dto/specialty-page';
 import { SpecialtyDto } from './dto/specialty.dto';
 import { SpecialtyService } from './specialty.service';
@@ -153,7 +153,7 @@ export class SpecialtyController {
         return specialty;
     }
 
-    @Delete(':specialtyId')
+    @Delete('')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PermissionGuard)
     @Permissions('admin')
@@ -164,10 +164,27 @@ export class SpecialtyController {
         type: Boolean,
     })
     async deleteSpecialty(
-        @Param('specialtyId') specialtyId: string
+        @Body() dataDelete: SpecialtyDelete
+        // @Param('specialtyId') specialtyId: string
     ): Promise<boolean> {
-        return await this.specialtyService.deleteSpecialty(specialtyId);
+        return await this.specialtyService.deleteManySpecialty(dataDelete.specialtyIds);
     }
+
+    // @Delete(':specialtyId')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAuthGuard, PermissionGuard)
+    // @Permissions('admin')
+    // @HttpCode(HttpStatus.OK)
+    // @ApiResponse({
+    //     status: HttpStatus.OK,
+    //     description: 'Delete Specialty',
+    //     type: Boolean,
+    // })
+    // async deleteSpecialty(
+    //     @Param('specialtyId') specialtyId: string
+    // ): Promise<boolean> {
+    //     return await this.specialtyService.deleteSpecialty(specialtyId);
+    // }
 
     @Get('specialty-clinic/:clinicId')
     @ApiBearerAuth()

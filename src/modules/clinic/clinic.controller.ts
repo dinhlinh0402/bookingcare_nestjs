@@ -6,7 +6,7 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { PermissionGuard } from 'src/guards/permission.guard';
 import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
 import { ClinicService } from './clinic.service';
-import { ClinicCreateDto, ClinicUpdateDto } from './dto/clinic-data.dto';
+import { ClinicChangeActive, ClinicCreateDto, ClinicDelete, ClinicUpdateDto } from './dto/clinic-data.dto';
 import { ClinicPageDto, ClinicPageOptionsDto } from './dto/clinic-page.dto';
 import { ClinicDto } from './dto/clinic.dto';
 import { diskStorage } from 'multer';
@@ -99,6 +99,22 @@ export class ClinicController {
         return clinic.toDto();
     }
 
+    @Put('change-active')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, PermissionGuard)
+    @Permissions('admin')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Change active clinic',
+        type: ClinicDto
+    })
+    async changeActiveClinic(
+        @Body() clinicChangeActiveDto: ClinicChangeActive
+    ): Promise<boolean> {
+        return await this.clinicService.changeActiveClinic(clinicChangeActiveDto);
+    }
+
     @Put(':clinicId')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PermissionGuard)
@@ -150,7 +166,23 @@ export class ClinicController {
         return clinic.toDto();
     }
 
-    @Delete(':clinicId')
+    // @Delete(':clinicId')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAuthGuard, PermissionGuard)
+    // @Permissions('admin')
+    // @HttpCode(HttpStatus.OK)
+    // @ApiResponse({
+    //     status: HttpStatus.OK,
+    //     description: 'Delete Clinic',
+    //     type: Boolean,
+    // })
+    // async deleteClinic(
+    //     @Param('clinicId') clinicId: string
+    // ): Promise<boolean> {
+    //     return await this.clinicService.deleteClinic(clinicId)
+    // }
+
+    @Delete()
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PermissionGuard)
     @Permissions('admin')
@@ -161,8 +193,10 @@ export class ClinicController {
         type: Boolean,
     })
     async deleteClinic(
-        @Param('clinicId') clinicId: string
+        // @Param('clinicId') clinicId: string
+        @Body() dataClinic: ClinicDelete
     ): Promise<boolean> {
-        return await this.clinicService.deleteClinic(clinicId)
+        return await this.clinicService.deleteManyClinic(dataClinic.clinicIds)
     }
+
 }

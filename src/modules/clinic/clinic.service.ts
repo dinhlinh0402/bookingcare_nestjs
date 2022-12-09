@@ -6,9 +6,10 @@ import { AuthService } from '../auth/auth.service';
 import { SpecialtyRepository } from '../specialty/specialty.repository';
 import { ClinicEntity } from './clinic.entity';
 import { ClinicRepository } from './clinic.repository';
-import { ClinicCreateDto, ClinicUpdateDto } from './dto/clinic-data.dto';
+import { ClinicChangeActive, ClinicCreateDto, ClinicUpdateDto } from './dto/clinic-data.dto';
 import { ClinicPageDto, ClinicPageOptionsDto } from './dto/clinic-page.dto';
 import { IFile } from '../../common/interfaces/file.interface';
+import { Brackets, In } from 'typeorm';
 
 @Injectable()
 export class ClinicService {
@@ -107,7 +108,17 @@ export class ClinicService {
         }
 
         if (clinicPageOptionsDto.q) {
-            queryBuilder.searchByString(clinicPageOptionsDto.q, ['clinic.name'])
+            // queryBuilder.searchByString(clinicPageOptionsDto.q, ['clinic.name'])
+            queryBuilder
+                .andWhere(
+                    new Brackets((qb) =>
+                        qb
+                            .orWhere('clinic.name LIKE :q')
+                            .orWhere('clinic.email LIKE :q')
+                            .orWhere('clinic.phone LIKE :q')
+                    ),
+                )
+                .setParameter('q', `%${clinicPageOptionsDto.q}%`)
         }
 
         const [entities, pageMetaDto] = await queryBuilder.paginate(clinicPageOptionsDto);
@@ -199,4 +210,41 @@ export class ClinicService {
         await this.clinicRepo.delete(clinic.id);
         return true;
     }
-}
+
+    async deleteManyClinic(clinicIds: string[]) {
+        const listClinic = await this.clinicRepo.find({
+            select: ['id'],
+            where: { id: In(clinicIds) },
+        })
+
+        if (listClinic.length < clinicIds.length) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.CLINIC_NOT_EXIST
+            );
+        }
+
+        // const 
+
+        await this.clinicRepo.delete(clinicIds);
+        return true;
+    }
+
+    async changeActiveClinic(dataChangeActive: ClinicChangeActive): Promise<boolean> {
+        const listClinic = await this.clinicRepo.find({
+            select: ['id'],
+            where: { id: In(dataChangeActive.clinicIds) }
+        })
+        if (listClinic.length < dataChangeActive.clinicIds.length) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.CLINIC_NOT_EXIST
+            );
+        }
+        await this.clinicRepo.update(
+            { id: In(dataChangeActive.clinicIds) },
+            { active: dataChangeActive.active }
+        )
+        return true;
+    }
+} 

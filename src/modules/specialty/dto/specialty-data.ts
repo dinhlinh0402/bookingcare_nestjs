@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { ArrayMinSize, IsArray, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class SpecialtyCreateDto {
     @IsString()
@@ -23,4 +24,14 @@ export class SpecialtyUpdateDto {
     @IsOptional()
     @ApiPropertyOptional()
     description: string;
+}
+
+export class SpecialtyDelete {
+    @IsUUID('4', { each: true })
+    @IsArray()
+    @ArrayMinSize(1)
+    @IsNotEmpty()
+    @Type(() => String)
+    @ApiProperty()
+    specialtyIds: string[];
 }

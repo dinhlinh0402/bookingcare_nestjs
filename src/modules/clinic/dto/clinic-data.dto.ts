@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Transform } from "class-transformer";
-import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from "class-validator";
+import { Transform, Type } from "class-transformer";
+import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from "class-validator";
 
 export class ClinicCreateDto {
     @IsString()
@@ -70,4 +70,30 @@ export class ClinicUpdateDto {
     @IsOptional()
     @ApiPropertyOptional()
     specialties: string;
+}
+
+export class ClinicDelete {
+    @IsUUID('4', { each: true })
+    @IsArray()
+    @ArrayMinSize(1)
+    @IsNotEmpty()
+    @Type(() => String)
+    @ApiProperty()
+    clinicIds: string[];
+}
+
+export class ClinicChangeActive {
+    @IsBoolean()
+    @IsNotEmpty()
+    @Transform(({ value }) => [1, '1', true, 'true'].includes(value))
+    @ApiProperty()
+    active: boolean;
+
+    @IsUUID('4', { each: true })
+    @IsArray()
+    @ArrayMinSize(1)
+    @IsNotEmpty()
+    @Type(() => String)
+    @ApiProperty()
+    clinicIds: string[];
 }
