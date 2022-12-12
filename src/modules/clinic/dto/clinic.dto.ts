@@ -22,6 +22,9 @@ export class ClinicDto extends AbstractDto {
     active: boolean;
 
     @ApiPropertyOptional()
+    province: string;
+
+    @ApiPropertyOptional()
     image: string;
 
     @ApiPropertyOptional({ type: () => ClinicInforDto })
@@ -41,6 +44,7 @@ export class ClinicDto extends AbstractDto {
         this.phone = entity.phone;
         this.email = entity.email;
         this.active = entity.active;
+        this.province = entity.province;
         this.image = entity.image;
 
         if (entity.creator) {

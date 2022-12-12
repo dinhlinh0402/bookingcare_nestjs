@@ -14,6 +14,12 @@ export class ClinicCreateDto {
     @ApiPropertyOptional()
     address: string;
 
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
+    @ApiPropertyOptional()
+    province: string;
+
     @IsPhoneNumber('VN')
     @IsString()
     @IsNotEmpty()
@@ -58,6 +64,12 @@ export class ClinicUpdateDto {
     @IsOptional()
     @ApiPropertyOptional()
     email: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
+    @ApiPropertyOptional()
+    province: string;
 
     @IsBoolean()
     // @IsString()

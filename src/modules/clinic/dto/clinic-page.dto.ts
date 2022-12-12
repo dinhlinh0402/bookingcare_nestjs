@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform, Type } from "class-transformer";
-import { IsArray, IsBoolean, IsEmail, IsOptional, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { PageMetaDto } from "src/common/dto/page-meta.dto";
 import { PageOptionsDto } from "src/common/dto/page-options.dto";
 import { ClinicDto } from "./clinic.dto";
@@ -47,4 +47,10 @@ export class ClinicPageOptionsDto extends PageOptionsDto {
         return newValue.map(item => ['1', 1, 'true', true].includes(item))
     })
     active: boolean[];
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
+    province: string;
 }

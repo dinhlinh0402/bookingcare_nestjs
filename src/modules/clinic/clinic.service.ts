@@ -46,8 +46,9 @@ export class ClinicService {
 
         if (clincCreateDto.specialties && clincCreateDto.specialties.length) {
             let specialtyIdArray;
+
             try {
-                specialtyIdArray = JSON.parse(clincCreateDto.specialties)
+                specialtyIdArray = JSON.parse(clincCreateDto.specialties);
             } catch (error) {
                 throw new ErrorException(
                     HttpStatus.BAD_REQUEST,
@@ -74,7 +75,6 @@ export class ClinicService {
     async getClinics(
         clinicPageOptionsDto: ClinicPageOptionsDto
     ): Promise<ClinicPageDto> {
-        // console.log(clinicPageOptionsDto);
         const queryBuilder = this.clinicRepo
             .createQueryBuilder('clinic')
             .leftJoinAndSelect('clinic.creator', 'creator')
@@ -107,6 +107,10 @@ export class ClinicService {
             queryBuilder.searchByString(clinicPageOptionsDto.phone, ['clinic.phone'])
         }
 
+        if (clinicPageOptionsDto.province) {
+            queryBuilder.searchByString(clinicPageOptionsDto.province, ['clinic.province'])
+        }
+
         if (clinicPageOptionsDto.q) {
             // queryBuilder.searchByString(clinicPageOptionsDto.q, ['clinic.name'])
             queryBuilder
@@ -116,6 +120,7 @@ export class ClinicService {
                             .orWhere('clinic.name LIKE :q')
                             .orWhere('clinic.email LIKE :q')
                             .orWhere('clinic.phone LIKE :q')
+                            .orWhere('clinic.province LIKE :q')
                     ),
                 )
                 .setParameter('q', `%${clinicPageOptionsDto.q}%`)

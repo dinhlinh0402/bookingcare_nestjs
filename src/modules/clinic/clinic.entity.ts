@@ -23,8 +23,11 @@ export class ClinicEntity extends AbstractEntity<ClinicDto> {
     @Column({ nullable: true })
     image: string;
 
-    @Column({ default: false })
+    @Column({ default: true })
     active: boolean;
+
+    @Column()
+    province: string;
 
     @OneToOne(() => ClinicInforEntity, {
         onDelete: 'SET NULL'
