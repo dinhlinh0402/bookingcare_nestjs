@@ -104,25 +104,25 @@ export class SchedulesService {
         //     Math.floor(new Date(scheduleData.date).getTime() / 86400000) * 86400000 - 7 * 3600000,
         // );
 
-        console.log('today: ', today);
+        // console.log('today: ', today);
         // console.log('todayTimezone: ', todayTimezone);
-        console.log('date old: ', scheduleData.date);
-        console.log('date: ', date);
+        // console.log('date old: ', scheduleData.date);
+        // console.log('date: ', date);
         // console.log('date: ', new Date(scheduleData.date));
         // console.log('date: ', new Date(scheduleData.date).getTime());
-        console.log('date: ', date.getTime() / 1000);
+        // console.log('date: ', date.getTime() / 1000);
 
         const tesst = date.getTime();
-        console.log('tesst gettime(): ', tesst);
+        // console.log('tesst gettime(): ', tesst);
 
-
-        console.log('tesst: ', new Date(tesst));
+        // console.log('tesst: ', new Date(tesst));
 
         // console.log('date.getime(): ', date.getTime());
         // console.log('date. new Date(): ', new Date(date.getTime() / 1000));
 
-
         const dataResponse: Array<ScheduleDto> = [];
+        // console.log('times: ', times,);
+
         for (let i = 0; i < times.length; i++) {
             const time = times[i];
             if (time.timeStart > time.timeEnd || time.timeStart == time.timeEnd) {
@@ -144,6 +144,8 @@ export class SchedulesService {
                     59
                 )
             )
+            // console.log('checkTimeStart: ', checkTimeStart);
+
             // console.log('checkTimeStart: ', checkTimeStart.getTime());
 
             const checkTimeEnd = new Date(
@@ -156,8 +158,8 @@ export class SchedulesService {
                     59
                 )
             )
-
-            console.log('checkTimeEnd: ', checkTimeEnd.getTime());
+            // console.log('checkTimeEnd: ', checkTimeEnd);
+            // console.log('checkTimeEnd: ', checkTimeEnd.getTime());
 
             const checkDate = new Date(
                 Date.UTC(
@@ -170,6 +172,7 @@ export class SchedulesService {
                 )
             )
 
+            // Ngày bắT đầu khác ngày kết thúc
             if (checkTimeStart.getTime() != checkTimeEnd.getTime()) {
                 throw new ErrorException(
                     HttpStatus.BAD_REQUEST,
@@ -177,6 +180,7 @@ export class SchedulesService {
                 )
             }
 
+            // Check ngày của lịch khám phỉa cùng ngày vs giờ bắt đầu và giờ kết thúc
             if (checkDate.getTime() != checkTimeStart.getTime() || checkDate.getTime() != checkTimeEnd.getTime()) {
                 throw new ErrorException(
                     HttpStatus.BAD_REQUEST,
@@ -191,6 +195,7 @@ export class SchedulesService {
             //     );
             // }
 
+            // Giờ bắt đầu và giờ kết thúc phỉa lớn hơn ngày hôm nay
             if (today.getTime() > new Date(timeStart).getTime() || today.getTime() > new Date(timeEnd).getTime()) {
                 throw new ErrorException(
                     HttpStatus.BAD_REQUEST,
@@ -198,6 +203,7 @@ export class SchedulesService {
                 );
             }
 
+            // giờ bắT đầu phải nhỏ hơn thời gina kếT thúc
             if (new Date(timeStart).getTime() == new Date(timeEnd).getTime()) {
                 throw new ErrorException(
                     HttpStatus.BAD_REQUEST,
@@ -230,11 +236,17 @@ export class SchedulesService {
                                 timeStart: format(new Date(timeStart), "yyyy-MM-dd'T'HH:mm:ss.SSS"),
                                 timeEnd: format(new Date(timeEnd), "yyyy-MM-dd'T'HH:mm:ss.SSS"),
                             })
+                            .orWhere(
+                                'schedule.time_start = :timeStart AND schedule.time_end = :timeEnd', {
+                                timeStart: format(new Date(timeStart), "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                                timeEnd: format(new Date(timeEnd), "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                            }
+                            )
                     })
                 )
                 .getMany()
 
-            console.log("checkSchedule: ", checkSchedule);
+            // console.log("checkSchedule: ", checkSchedule);
 
             if (checkSchedule && checkSchedule.length > 0) {
                 throw new ErrorException(
@@ -251,7 +263,6 @@ export class SchedulesService {
                 date: date.getTime().toString(),
                 maxCount: scheduleData.maxCount,
             })
-
             await this.scheduleRepo.save(schedule);
             dataResponse.push(schedule.toDto())
         }
@@ -310,7 +321,7 @@ export class SchedulesService {
         )
         const today = new Date();
 
-        console.log('date: ', date);
+        // console.log('date: ', date);
 
         await this.scheduleRepo
             .createQueryBuilder()
@@ -347,7 +358,7 @@ export class SchedulesService {
                     59
                 )
             )
-            console.log('checkTimeStart: ', checkTimeStart.getTime());
+            // console.log('checkTimeStart: ', checkTimeStart.getTime());
 
             const checkTimeEnd = new Date(
                 Date.UTC(
@@ -360,7 +371,7 @@ export class SchedulesService {
                 )
             )
 
-            console.log('checkTimeEnd: ', checkTimeEnd.getTime());
+            // console.log('checkTimeEnd: ', checkTimeEnd.getTime());
 
             const checkDate = new Date(
                 Date.UTC(
@@ -430,7 +441,7 @@ export class SchedulesService {
                 )
                 .getMany()
 
-            console.log("checkSchedule: ", checkSchedule);
+            // console.log("checkSchedule: ", checkSchedule);
 
             if (checkSchedule && checkSchedule.length > 0) {
                 throw new ErrorException(
@@ -471,7 +482,7 @@ export class SchedulesService {
         }
 
         const timeNow = new Date();
-        console.log('timeNow', timeNow);
+        // console.log('timeNow', timeNow);
 
         // convert về đầu ngày vd 2022-10-19T00:00:00.822Z
         const date = new Date(
@@ -510,6 +521,8 @@ export class SchedulesService {
                 timeNow: timeNow,
                 doctorId: pageOptionsDto.doctorId,
             })
+            .orderBy('schedule.timeStart', 'ASC')
+            .addOrderBy('schedule.timeEnd', 'ASC')
 
         const [entities, pageMetaDto] = await queryBuilder.paginate(pageOptionsDto);
 
