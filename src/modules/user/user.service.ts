@@ -275,7 +275,7 @@ export class UserService {
                     new Brackets((qb) =>
                         qb
                             .where("REPLACE(CONCAT(COALESCE(user.first_name, ''), ' ', COALESCE(user.middle_name, ''), ' ', COALESCE(user.last_name,'')), '  ', ' ') LIKE :q")
-                            .orWhere("user.emai LIKE :q")
+                            .orWhere("user.email LIKE :q")
                             .orWhere("clinic.name LIKE :q")
                             .orWhere("specialty.name LIKE :q")
                             .orWhere("user.phoneNumber LIKE :q")
