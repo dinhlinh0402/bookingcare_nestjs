@@ -17,7 +17,6 @@ export class UserCreateDto {
     firstName: string;
 
     @IsString()
-    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     middleName: string;
@@ -90,7 +89,6 @@ export class UserUpdateDto {
     firstName: string;
 
     @IsString()
-    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     middleName: string;
@@ -115,20 +113,32 @@ export class UserUpdateDto {
     })
     role: RoleEnum;
 
-    @IsDateString()
-    @IsNotEmpty()
+    @IsString()
     @IsOptional()
     @ApiPropertyOptional()
     birthday: Date;
 
     @IsString()
-    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     address: string;
 
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional()
+    nation: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional()
+    religion: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional()
+    identityCardNumber: string;
+
     @IsPhoneNumber('VN')
-    @IsNotEmpty()
     @IsOptional()
     @ApiPropertyOptional()
     phoneNumber: string;
