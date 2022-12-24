@@ -263,7 +263,7 @@ export class UserService {
 
         if (optionsDto.specialtyIds && optionsDto.specialtyIds.length) {
             queryBuilder.andWhere(
-                'user.specialty IN (: specialtyIds)', {
+                'user.specialty IN (:specialtyIds)', {
                 specialtyIds: optionsDto.specialtyIds,
             })
         }
@@ -294,7 +294,7 @@ export class UserService {
     async getUserById(userId: string): Promise<UserEntity> {
         const user = await this.userRepo.findOne({
             where: { id: userId },
-            relations: ['creator', 'clinic', 'specialty']
+            relations: ['creator', 'clinic', 'specialty', 'doctorInfor']
         });
 
         if (!user) {
