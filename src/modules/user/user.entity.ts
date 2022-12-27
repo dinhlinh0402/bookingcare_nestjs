@@ -64,7 +64,9 @@ export class UserEntity extends AbstractEntity<UserDto> {
     @Column({ nullable: true, default: 1, comment: 'trạng thái' })
     status: boolean;
 
-    @OneToOne(() => DoctorInforEntity)
+    @OneToOne(() => DoctorInforEntity, {
+        onDelete: 'CASCADE'
+    })
     @JoinColumn()
     doctorInfor: DoctorInforEntity;
 
