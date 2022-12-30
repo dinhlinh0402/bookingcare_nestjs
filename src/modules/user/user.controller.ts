@@ -91,7 +91,7 @@ export class UserController {
 
     @Get(':userId')
     @UseGuards(JwtAuthGuard, PermissionGuard)
-    @Permissions('admin', 'manager_clinic')
+    @Permissions('admin', 'manager_clinic', 'HEAD_OF_DOCTOR', 'DOCTOR')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
@@ -124,7 +124,7 @@ export class UserController {
 
     @Put(':userId')
     @UseGuards(JwtAuthGuard, PermissionGuard)
-    @Permissions('admin', 'manager_clinic', 'HEAD_OF_DOCTOR')
+    @Permissions('admin', 'manager_clinic', 'HEAD_OF_DOCTOR', 'DOCTOR')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
