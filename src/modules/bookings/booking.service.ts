@@ -7,8 +7,10 @@ import { ErrorException } from 'src/exceptions/error.exception';
 import { AuthService } from '../auth/auth.service';
 import { ScheduleRepository } from '../schedules/schedule.repository';
 import { UserRepository } from '../user/user.repository';
+import { BookingEntity } from './booking.entity';
 import { BookingRelativesRepository, BookingRepository } from './booking.repository';
 import { BookingCreateDto } from './dto/booking-data.dto';
+import { BookingPageDto, BookingPageOptionsDto } from './dto/booking-page.dto';
 
 @Injectable()
 export class BookingsService {
@@ -139,6 +141,75 @@ export class BookingsService {
             await this.bookingRepo.save(booking);
         }
 
+        return booking;
+    }
+
+    async getBookings(bookingData: BookingPageOptionsDto): Promise<BookingPageDto> {
+        const user = AuthService.getAuthUser();
+        if (!user) {
+            throw new ErrorException(
+                HttpStatus.UNAUTHORIZED,
+                CodeMessage.UNAUTHORIZED,
+            );
+        }
+
+        const queryBuilder = this.bookingRepo
+            .createQueryBuilder('booking')
+            .leftJoinAndSelect('booking.schedule', 'schedule')
+            .leftJoinAndSelect('booking.doctor', 'doctor')
+            .leftJoinAndSelect('booking.patient', 'patient')
+            .leftJoinAndSelect('booking.bookingRelatives', 'bookingRelatives')
+            .orderBy(`booking.${bookingData.orderBy}`, bookingData.order)
+
+        if (bookingData.doctorId) {
+            queryBuilder.andWhere('booking.doctor_id = :doctorId', {
+                doctorId: bookingData.doctorId,
+            })
+        }
+
+        if (bookingData.patientId) {
+            queryBuilder.andWhere('booking.patient_id = :patientId', {
+                patientId: bookingData.patientId,
+            })
+        }
+
+        if (bookingData.date) {
+            // const data
+            queryBuilder.andWhere('booking.date = :date', {
+                date: bookingData.date,
+            })
+        }
+
+        if (bookingData.status && bookingData.status.length) {
+            queryBuilder.andWhere('booking.status IN (:status)', {
+                status: bookingData.status,
+            })
+        }
+
+        const [entities, pageMetaDto] = await queryBuilder.paginate(bookingData);
+        return new BookingPageDto(entities.toDtos(), pageMetaDto);
+    }
+
+    async getBookingById(bookingId: string): Promise<BookingEntity> {
+        const user = AuthService.getAuthUser();
+        if (!user) {
+            throw new ErrorException(
+                HttpStatus.UNAUTHORIZED,
+                CodeMessage.UNAUTHORIZED,
+            );
+        }
+
+        const booking = await this.bookingRepo.findOne({
+            where: { id: bookingId },
+            relations: ['schedule', 'doctor', 'patient', 'bookingRelatives']
+        })
+
+        if (!booking) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.BOOKING_NOT_EXIST,
+            );
+        }
         return booking;
     }
 }

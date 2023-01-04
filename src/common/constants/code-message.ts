@@ -67,4 +67,7 @@ export enum CodeMessage {
 
     // File
     FILE_CAN_NOT_EMPTY = 'FILE_CAN_NOT_EMPTY',
+
+    // booking
+    BOOKING_NOT_EXIST = 'BOOKING_NOT_EXIST',
 } 

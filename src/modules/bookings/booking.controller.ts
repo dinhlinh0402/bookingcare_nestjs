@@ -56,7 +56,8 @@ export class BookingssController {
     }
 
     @Get()
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, PermissionGuard)
+    @Permissions('admin', 'manager_clinic', 'HEAD_OF_DOCTOR', 'DOCTOR', 'USER')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
         status: HttpStatus.OK,
@@ -67,12 +68,12 @@ export class BookingssController {
         @Query(new ValidationPipe({ transform: true }))
         bookingPageOptionsDto: BookingPageOptionsDto
     ) {
-        // console.log('run');
-
+        return this.bookingsService.getBookings(bookingPageOptionsDto);
     }
 
     @Get(':bookingId')
     @UseGuards(JwtAuthGuard)
+    @Permissions('admin', 'manager_clinic', 'HEAD_OF_DOCTOR', 'DOCTOR', 'USER')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
         status: HttpStatus.OK,
@@ -82,7 +83,8 @@ export class BookingssController {
     async getBookingById(
         @Param('bookingId') bookingId: string,
     ) {
-
+        const booking = await this.bookingsService.getBookingById(bookingId);
+        return booking.toDto();
     }
 
     @Delete(':bookingId')

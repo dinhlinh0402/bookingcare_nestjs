@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Transform } from "class-transformer";
-import { IsDate, IsEnum, IsOptional, IsUUID } from "class-validator";
+import { Transform, Type } from "class-transformer";
+import { IsArray, IsDate, IsEnum, IsOptional, IsUUID } from "class-validator";
 import { BookingStatus } from "src/common/constants/booking.enum";
 import { PageMetaDto } from "src/common/dto/page-meta.dto";
 import { PageOptionsDto } from "src/common/dto/page-options.dto";
@@ -33,14 +33,39 @@ export class BookingPageOptionsDto extends PageOptionsDto {
     @ApiPropertyOptional()
     doctorId: string;
 
-    @IsEnum(BookingStatus)
-    @IsOptional()
-    @ApiPropertyOptional({ type: BookingStatus })
-    status: BookingStatus;
+    // @IsEnum(BookingStatus)
+    // @IsOptional()
+    // @ApiPropertyOptional({ type: BookingStatus })
+    // status: BookingStatus;
 
     @IsDate()
     @IsOptional()
     @ApiPropertyOptional()
     @Transform(({ value }) => new Date(value))
     date: Date;
+
+    @IsOptional()
+    @IsArray()
+    @IsEnum(BookingStatus, { each: true })
+    @Type(() => Status)
+    @Transform(({ value }) => {
+        return typeof value === 'string' ? [value] : value;
+    })
+    @ApiPropertyOptional({
+        required: false,
+        description: 'List status'
+    })
+    status: Status[];
+}
+
+export class Status {
+    @ApiPropertyOptional({
+        // type: [Role],
+        // enum: RoleEnum,
+        required: false,
+        description: 'BookingStatus'
+    })
+    @IsEnum(BookingStatus)
+    @IsOptional()
+    status: BookingStatus;
 }

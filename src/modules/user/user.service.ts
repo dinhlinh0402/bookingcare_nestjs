@@ -174,7 +174,6 @@ export class UserService {
 
     async getUsers(optionsDto: UsersPageOptionsDto): Promise<UsersPageDto> {
         const user = AuthService.getAuthUser();
-        console.log('user: ', user);
 
         const queryBuilder = this.userRepo
             .createQueryBuilder('user')
