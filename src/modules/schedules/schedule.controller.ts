@@ -5,7 +5,7 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { PermissionGuard } from 'src/guards/permission.guard';
 import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
 import { SchedulePageDto, SchedulePageOptionsDto } from './dto/schdule-page.dto';
-import { ScheduleCreateDto, ScheduleUpdateDto } from './dto/schedule-data.dto';
+import { ScheduleCreateDto, ScheduleDelete, ScheduleUpdateDto } from './dto/schedule-data.dto';
 import { ScheduleDto } from './dto/schedule.dto';
 import { SchedulesService } from './schedule.service';
 
@@ -83,6 +83,22 @@ export class SchedulesController {
         return schedule.toDto();
     }
 
+    @Delete('many-schedule')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, PermissionGuard)
+    @Permissions('doctor')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Delete many schedules for doctor',
+        type: Boolean
+    })
+    async deleteManySchedule(
+        @Body() dataSchedule: ScheduleDelete
+    ): Promise<boolean> {
+        return await this.scheduleService.deleteManySchedule(dataSchedule.scheduleIds)
+    }
+
     @Delete(':scheduleId')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PermissionGuard)
@@ -98,6 +114,10 @@ export class SchedulesController {
     ): Promise<boolean> {
         return await this.scheduleService.deleteSchedule(scheduleId)
     }
+
+
+
+
 
 
 }

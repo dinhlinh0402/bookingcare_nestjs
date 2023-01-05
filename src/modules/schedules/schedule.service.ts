@@ -4,7 +4,7 @@ import { CodeMessage } from 'src/common/constants/code-message';
 import { RoleEnum } from 'src/common/constants/role';
 import { StatusSchedule } from 'src/common/constants/schedule.enum';
 import { ErrorException } from 'src/exceptions/error.exception';
-import { Brackets } from 'typeorm';
+import { Brackets, In } from 'typeorm';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
@@ -261,7 +261,7 @@ export class SchedulesService {
                 timeStart: timeStart,
                 timeEnd: timeEnd,
                 date: date.getTime().toString(),
-                maxCount: scheduleData.maxCount,
+                maxCount: time.maxCount,
             })
             await this.scheduleRepo.save(schedule);
             dataResponse.push(schedule.toDto())
@@ -559,6 +559,35 @@ export class SchedulesService {
         }
 
         await this.scheduleRepo.delete(schedule.id)
+
+        return true;
+    }
+
+    async deleteManySchedule(scheduleIds: string[]): Promise<boolean> {
+        const user = AuthService.getAuthUser();
+        if (!user) {
+            throw new ErrorException(
+                HttpStatus.UNAUTHORIZED,
+                CodeMessage.UNAUTHORIZED,
+            );
+        }
+
+        const countScheduleBooked = await this.scheduleRepo
+            .createQueryBuilder('schedule')
+            .select(['schedule.id'])
+            .where(`schedule.id IN( :scheduleIds) AND schedule.booked > 0`, {
+                scheduleIds: scheduleIds,
+            })
+            .getMany()
+
+        if (countScheduleBooked && countScheduleBooked.length) {
+            throw new ErrorException(
+                HttpStatus.BAD_REQUEST,
+                CodeMessage.APPOINTMENT_HAS_BEEN_BOOKED,
+            );
+        }
+
+        await this.scheduleRepo.delete(scheduleIds);
 
         return true;
     }

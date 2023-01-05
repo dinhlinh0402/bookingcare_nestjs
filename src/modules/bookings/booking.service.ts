@@ -140,6 +140,9 @@ export class BookingsService {
             })
             await this.bookingRepo.save(booking);
         }
+        await this.scheduleRepo.update(
+            { id: schedule.id },
+            { booked: schedule.booked + 1 })
 
         return booking;
     }
