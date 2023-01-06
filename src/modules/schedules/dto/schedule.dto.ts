@@ -20,6 +20,9 @@ export class ScheduleDto extends AbstractDto {
     @ApiPropertyOptional()
     maxCount: number;
 
+    @ApiPropertyOptional()
+    booked: number;
+
     @ApiPropertyOptional({ type: () => UserDto })
     doctor: UserDto;
 
@@ -33,6 +36,8 @@ export class ScheduleDto extends AbstractDto {
         this.timeStart = entity.timeStart;
         this.timeEnd = entity.timeEnd;
         this.date = entity.date;
+        this.maxCount = entity.maxCount;
+        this.booked = entity.booked;
 
         if (entity.doctor) {
             this.doctor = entity.doctor;
