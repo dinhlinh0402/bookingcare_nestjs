@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform, Type } from "class-transformer";
-import { IsArray, IsDate, IsEnum, IsOptional, IsUUID } from "class-validator";
+import { isArray, IsArray, IsDate, IsEnum, IsNotEmpty, IsOptional, IsUUID } from "class-validator";
 import { BookingStatus } from "src/common/constants/booking.enum";
 import { PageMetaDto } from "src/common/dto/page-meta.dto";
 import { PageOptionsDto } from "src/common/dto/page-options.dto";
@@ -68,4 +68,78 @@ export class Status {
     @IsEnum(BookingStatus)
     @IsOptional()
     status: BookingStatus;
+}
+
+export class BookingsByClinicDto {
+    @IsUUID('4')
+    @IsNotEmpty()
+    @ApiProperty()
+    clinicId: string;
+}
+
+class WaitingDto {
+    @ApiPropertyOptional({ type: () => BookingDto, isArray: true })
+    dataWaiting: BookingDto[];
+
+    @ApiPropertyOptional()
+    totalWaiting: number;
+}
+
+class ConfirmedDto {
+    @ApiPropertyOptional({ type: () => BookingDto, isArray: true })
+    dataConfirmed: BookingDto[];
+
+    @ApiPropertyOptional()
+    totalConfirmed: number;
+}
+
+class CancelDto {
+    @ApiPropertyOptional({ type: () => BookingDto, isArray: true })
+    dataCancel: BookingDto[];
+
+    @ApiPropertyOptional()
+    totalCancel: number;
+}
+
+class DoneDto {
+    @ApiPropertyOptional({ type: () => BookingDto, isArray: true })
+    dataDone: BookingDto[];
+
+    @ApiPropertyOptional()
+    totalDone: number;
+}
+
+
+export class BookingsByClinicResDto {
+    @ApiProperty({
+        type: WaitingDto,
+        // isArray: true,
+    })
+    readonly waiting: WaitingDto;
+
+    @ApiProperty({
+        type: ConfirmedDto,
+        // isArray: true,
+    })
+    readonly confirmed: ConfirmedDto;
+
+    @ApiProperty({
+        type: CancelDto,
+        // isArray: true,
+    })
+    readonly cancel: CancelDto;
+
+    @ApiProperty({
+        type: DoneDto,
+        // isArray: true,
+    })
+    readonly done: DoneDto;
+
+    constructor(waiting: WaitingDto, confirmed: ConfirmedDto, cancel: CancelDto, done: DoneDto) {
+        this.waiting = waiting;
+        this.confirmed = confirmed;
+        this.cancel = cancel;
+        this.done = done;
+        // this.meta = meta;
+    }
 }

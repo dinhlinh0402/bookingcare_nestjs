@@ -313,8 +313,6 @@ export class UserService {
         file: IFile
     ): Promise<UserEntity> {
         const authUser = AuthService.getAuthUser();
-        console.log(authUser);
-
 
         let user = await this.userRepo.findOne({
             where: { id: userId },

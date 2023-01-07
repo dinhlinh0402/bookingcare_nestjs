@@ -83,7 +83,7 @@ export class BookingUpdateDto {
     status: BookingStatus;
 
     @IsEnum(BookingType)
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty({ enum: BookingType })
     type: BookingType;
 
@@ -108,14 +108,19 @@ export class BookingUpdateDto {
     gender: GenderEnum;
 
     @IsDateString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiPropertyOptional()
     birthday: Date;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiPropertyOptional()
     address: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional()
+    userNote: string;
 }
 
 export class ConfirmBookingDto {

@@ -5,12 +5,14 @@ import { RoleEnum } from 'src/common/constants/role';
 import { StatusSchedule } from 'src/common/constants/schedule.enum';
 import { ErrorException } from 'src/exceptions/error.exception';
 import { AuthService } from '../auth/auth.service';
+import { ClinicEntity } from '../clinic/clinic.entity';
 import { ScheduleRepository } from '../schedules/schedule.repository';
 import { UserRepository } from '../user/user.repository';
 import { BookingEntity } from './booking.entity';
 import { BookingRelativesRepository, BookingRepository } from './booking.repository';
-import { BookingCreateDto } from './dto/booking-data.dto';
-import { BookingPageDto, BookingPageOptionsDto } from './dto/booking-page.dto';
+import { BookingCreateDto, BookingUpdateDto } from './dto/booking-data.dto';
+import { BookingPageDto, BookingPageOptionsDto, BookingsByClinicDto } from './dto/booking-page.dto';
+import { BookingDto } from './dto/booking.dto';
 
 @Injectable()
 export class BookingsService {
@@ -177,7 +179,6 @@ export class BookingsService {
         }
 
         if (bookingData.date) {
-            // const data
             queryBuilder.andWhere('booking.date = :date', {
                 date: bookingData.date,
             })
@@ -214,5 +215,104 @@ export class BookingsService {
             );
         }
         return booking;
+    }
+
+    async updateBooking(bookingUpdateDto: BookingUpdateDto, bookingId: string): Promise<boolean> {
+        const authUser = AuthService.getAuthUser();
+
+        if (!authUser) {
+            throw new ErrorException(
+                HttpStatus.UNAUTHORIZED,
+                CodeMessage.UNAUTHORIZED,
+            );
+        }
+
+        let booked = await this.bookingRepo.findOne({
+            where: { id: bookingId }
+        })
+
+        if (!booked) {
+            throw new ErrorException(
+                HttpStatus.NOT_FOUND,
+                CodeMessage.BOOKING_NOT_EXIST
+            )
+        }
+
+        if (authUser.role === RoleEnum.DOCTOR) {
+            await this.bookingRepo.update(
+                { id: bookingId },
+                { userNote: bookingUpdateDto.userNote }
+            )
+        } else if (authUser.role === RoleEnum.ADMIN || authUser.role === RoleEnum.MANAGER_CLINIC) {
+            await this.bookingRepo.update(
+                { id: bookingId },
+                { status: bookingUpdateDto.status }
+            )
+        } else if (authUser.role === RoleEnum.USER) {
+            booked = Object.assign(booked, bookingUpdateDto);
+            await this.bookingRepo.save(booked);
+        }
+
+        return true;
+    }
+
+    async getBookingsByClinic(bookingData: BookingsByClinicDto) {
+        const authUser = AuthService.getAuthUser();
+
+        if (!authUser) {
+            throw new ErrorException(
+                HttpStatus.UNAUTHORIZED,
+                CodeMessage.UNAUTHORIZED,
+            );
+        }
+
+        const bookings = await this.bookingRepo
+            .createQueryBuilder('bookings')
+            .leftJoinAndSelect('bookings.doctor', 'doctor')
+            .leftJoinAndSelect('bookings.patient', 'patient')
+            .leftJoinAndSelect('bookings.schedule', 'schedule')
+            .leftJoin(ClinicEntity, 'clinic', 'clinic.id = doctor.clinic')
+            .where('clinic.id = :clinicId', {
+                clinicId: bookingData.clinicId,
+            })
+            .orderBy('schedule.timeStart', 'ASC')
+            .addOrderBy('schedule.timeEnd', 'ASC')
+            .getMany();
+
+        // WAITING, CONFIRMED, CANCEL, DONE
+        let dataWaiting: BookingDto[] = [],
+            dataConfirmed: BookingDto[] = [],
+            dataCancel: BookingDto[] = [],
+            dataDone: BookingDto[] = [];
+        bookings.forEach(booking => {
+            if (booking.status === BookingStatus.WAITING) {
+                dataWaiting.push(booking);
+            } else if (booking.status === BookingStatus.CONFIRMED) {
+                dataConfirmed.push(booking);
+            } else if (booking.status === BookingStatus.CANCEL) {
+                dataCancel.push(booking);
+            } else if (booking.status === BookingStatus.DONE) {
+                dataDone.push(booking);
+            }
+        })
+
+        return {
+            waiting: {
+                dataWaiting: dataWaiting,
+                totalWaiting: dataWaiting.length || 0,
+            },
+            confirmed: {
+                dataConfirmed: dataConfirmed,
+                totalConfirmed: dataConfirmed.length || 0,
+            },
+            cancel: {
+                dataCancel: dataCancel,
+                totalCancel: dataCancel.length || 0,
+            },
+            done: {
+                dataDone: dataDone,
+                totalDone: dataDone.length || 0,
+            },
+        }
     }
 }

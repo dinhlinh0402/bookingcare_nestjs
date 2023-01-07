@@ -41,8 +41,8 @@ export class BookingDto extends AbstractDto {
     @ApiPropertyOptional({ type: 'enum', enum: BookingStatus })
     status: BookingStatus;
 
-    @ApiPropertyOptional()
-    token: string;
+    // @ApiPropertyOptional()
+    // token: string;
 
     @ApiPropertyOptional({ type: () => UserDto })
     doctor: UserDto;
@@ -58,6 +58,9 @@ export class BookingDto extends AbstractDto {
 
     @ApiPropertyOptional()
     reason: string;
+
+    @ApiPropertyOptional()
+    userNote: string;
 
     @ApiPropertyOptional({ type: () => BookingRelativesDto })
     bookingRelatives: BookingRelativesDto;
@@ -77,6 +80,7 @@ export class BookingDto extends AbstractDto {
         this.date = entity.date;
         this.bookingDate = entity.bookingDate;
         this.type = entity.type;
+        this.userNote = entity.userNote;
 
         if (entity.doctor) {
             this.doctor = entity.doctor;

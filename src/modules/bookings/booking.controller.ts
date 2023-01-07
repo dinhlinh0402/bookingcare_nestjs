@@ -6,7 +6,7 @@ import { PermissionGuard } from 'src/guards/permission.guard';
 import { AuthUserInterceptor } from 'src/interceptors/auth-user.interceptor';
 import { BookingsService } from './booking.service';
 import { BookingCreateDto, BookingUpdateDto, ConfirmBookingDto } from './dto/booking-data.dto';
-import { BookingPageDto, BookingPageOptionsDto } from './dto/booking-page.dto';
+import { BookingPageDto, BookingPageOptionsDto, BookingsByClinicDto, BookingsByClinicResDto } from './dto/booking-page.dto';
 import { BookingDto } from './dto/booking.dto';
 
 @Controller('bookings')
@@ -19,8 +19,6 @@ export class BookingssController {
     constructor(
         private bookingsService: BookingsService,
     ) { }
-
-
 
     @Post()
     @UseGuards(JwtAuthGuard, PermissionGuard)
@@ -41,18 +39,19 @@ export class BookingssController {
 
     @Put(':bookingId')
     @UseGuards(JwtAuthGuard)
-    @Permissions('user')
+    @Permissions('user', 'DOCTOR', 'MANAGER_CLINIC')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
         status: HttpStatus.OK,
         description: 'Update booking by user',
-        type: BookingDto,
+        // type: BookingDto,
+        type: Boolean,
     })
     async updateBooking(
         @Body() bookingUpdateDto: BookingUpdateDto,
         @Param('bookingId') bookingId: string,
-    ) {
-
+    ): Promise<boolean> {
+        return this.bookingsService.updateBooking(bookingUpdateDto, bookingId);
     }
 
     @Get()
@@ -69,6 +68,22 @@ export class BookingssController {
         bookingPageOptionsDto: BookingPageOptionsDto
     ) {
         return this.bookingsService.getBookings(bookingPageOptionsDto);
+    }
+
+    @Get('clinic')
+    @UseGuards(JwtAuthGuard, PermissionGuard)
+    @Permissions('admin', 'manager_clinic')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        status: HttpStatus.OK,
+        description: 'get bookings',
+        type: BookingsByClinicResDto
+    })
+    async getBookingsByClinic(
+        @Query(new ValidationPipe({ transform: true }))
+        bookingDto: BookingsByClinicDto
+    ): Promise<BookingsByClinicResDto> {
+        return this.bookingsService.getBookingsByClinic(bookingDto);
     }
 
     @Get(':bookingId')
