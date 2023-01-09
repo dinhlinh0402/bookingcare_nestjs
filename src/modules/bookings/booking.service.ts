@@ -1,4 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { time } from 'console';
+import { differenceInHours, format } from 'date-fns';
 import { BookingStatus, BookingType } from 'src/common/constants/booking.enum';
 import { CodeMessage } from 'src/common/constants/code-message';
 import { RoleEnum } from 'src/common/constants/role';
@@ -163,6 +165,7 @@ export class BookingsService {
             .leftJoinAndSelect('booking.schedule', 'schedule')
             .leftJoinAndSelect('booking.doctor', 'doctor')
             .leftJoinAndSelect('booking.patient', 'patient')
+            .leftJoinAndSelect('doctor.clinic', 'clinic')
             .leftJoinAndSelect('booking.bookingRelatives', 'bookingRelatives')
             .orderBy(`booking.${bookingData.orderBy}`, bookingData.order)
 
@@ -228,7 +231,8 @@ export class BookingsService {
         }
 
         let booked = await this.bookingRepo.findOne({
-            where: { id: bookingId }
+            where: { id: bookingId },
+            relations: ['schedule']
         })
 
         if (!booked) {
@@ -237,18 +241,35 @@ export class BookingsService {
                 CodeMessage.BOOKING_NOT_EXIST
             )
         }
+        const timeNow = new Date();
 
-        if (authUser.role === RoleEnum.DOCTOR) {
+        // console.log('timeNow: ', timeNow);
+        // console.log('timeStart: ', booked.schedule.timeStart);
+        // const datetest = format(new Date('2023-01-10T17:00:00.000Z'), "yyyy-MM-dd'T'HH:mm:SSS");
+        // console.log('test: ', new Date('2023-01-10T17:00:00.000Z'));
+
+        // console.log('test: ', new Date('2023-01-10T17:00:00.000Z'));
+
+        if (bookingUpdateDto.userNote && authUser.role === RoleEnum.MANAGER_CLINIC) {
             await this.bookingRepo.update(
                 { id: bookingId },
                 { userNote: bookingUpdateDto.userNote }
             )
-        } else if (authUser.role === RoleEnum.ADMIN || authUser.role === RoleEnum.MANAGER_CLINIC) {
+        } else if (bookingUpdateDto.status && (authUser.role === RoleEnum.ADMIN || authUser.role === RoleEnum.MANAGER_CLINIC)) {
             await this.bookingRepo.update(
                 { id: bookingId },
                 { status: bookingUpdateDto.status }
             )
-        } else if (authUser.role === RoleEnum.USER) {
+        } else if (bookingUpdateDto) {
+            //user chỉ có thể huỷ hoặc confirm
+            if (bookingUpdateDto.status === BookingStatus.CANCEL) {
+                if (differenceInHours(booked.schedule.timeStart, timeNow) < 24) {
+                    throw new ErrorException(
+                        HttpStatus.BAD_REQUEST,
+                        'CANNOT_CANCEL_AFTER_24_HOURS'
+                    )
+                }
+            }
             booked = Object.assign(booked, bookingUpdateDto);
             await this.bookingRepo.save(booked);
         }
