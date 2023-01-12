@@ -292,6 +292,7 @@ export class BookingsService {
             .leftJoinAndSelect('bookings.doctor', 'doctor')
             .leftJoinAndSelect('bookings.patient', 'patient')
             .leftJoinAndSelect('bookings.schedule', 'schedule')
+            .leftJoinAndSelect('bookings.bookingRelatives', 'bookingRelatives')
             .leftJoin(ClinicEntity, 'clinic', 'clinic.id = doctor.clinic')
             .where('clinic.id = :clinicId', {
                 clinicId: bookingData.clinicId,

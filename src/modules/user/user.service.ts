@@ -488,7 +488,7 @@ export class UserService {
         // Different ways
         // await this.userRepo
         //     .createQueryBuilder()
-        //     .update('user')
+        //     .update('users')
         //     .set({ status: dataUpdatseStatus.status })
         //     .where({ id: In(dataUpdatseStatus.userIds) })
         //     .execute();

@@ -5,11 +5,13 @@ import { ClinicRepository } from './clinic.repository';
 import { ClinicService } from './clinic.service';
 import { ClinicInforModule } from './clinic-infor/clinic-infor.module';
 import { SpecialtyRepository } from '../specialty/specialty.repository';
+import { UserRepository } from '../user/user.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     ClinicRepository,
     SpecialtyRepository,
+    UserRepository,
   ]),
     ClinicInforModule],
   controllers: [ClinicController],

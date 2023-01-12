@@ -47,4 +47,11 @@ export class DoctorPageOptionsDto extends PageOptionsDto {
     @Transform(({ value }) => ['1', 'true', 1, true].includes(value))
     @ApiPropertyOptional({ default: true })
     topDoctor: boolean;
+
+    @IsBoolean()
+    // @IsString()
+    @IsOptional()
+    @Transform(({ value }) => ['1', 1, 'true', true].includes(value))
+    @ApiPropertyOptional()
+    status: boolean;
 }

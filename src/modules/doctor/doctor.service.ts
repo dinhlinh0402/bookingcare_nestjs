@@ -22,8 +22,9 @@ export class DoctorService {
             .leftJoinAndSelect('doctor.clinic', 'clinic')
             .leftJoinAndSelect('doctor.doctorInfor', 'doctorInfor')
             .leftJoinAndSelect('doctor.specialty', 'specialty')
-            .where('doctor.role = :role AND clinic.active = :active', {
+            .where('doctor.role = :role AND doctor.status = :status AND clinic.active = :active', {
                 role: RoleEnum.DOCTOR,
+                status: true,
                 active: true
             })
             .orderBy(`doctor.${pageOptionsDto.orderBy}`, pageOptionsDto.order)
@@ -69,9 +70,10 @@ export class DoctorService {
             .leftJoinAndSelect('doctor.clinic', 'clinic')
             .leftJoinAndSelect('doctor.specialty', 'specialty')
             .where(
-                'doctor.id = :doctorId AND doctor.role = :role AND clinic.active = :active', {
+                'doctor.id = :doctorId AND doctor.role = :role AND doctor.status = :status AND clinic.active = :active', {
                 doctorId: doctorId,
                 role: RoleEnum.DOCTOR,
+                status: true,
                 active: true,
             }
             )

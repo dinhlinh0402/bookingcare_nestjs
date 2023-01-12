@@ -10,12 +10,14 @@ import { ClinicChangeActive, ClinicCreateDto, ClinicUpdateDto } from './dto/clin
 import { ClinicPageDto, ClinicPageOptionsDto } from './dto/clinic-page.dto';
 import { IFile } from '../../common/interfaces/file.interface';
 import { Brackets, In } from 'typeorm';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class ClinicService {
     constructor(
         public readonly clinicRepo: ClinicRepository,
         public readonly specialtyRepo: SpecialtyRepository,
+        public readonly userRepo: UserRepository,
     ) { }
 
     @Transactional()
@@ -250,6 +252,18 @@ export class ClinicService {
             { id: In(dataChangeActive.clinicIds) },
             { active: dataChangeActive.active }
         )
+
+        // await this.userRepo.update(
+        //     {clinic: In(dataChangeActive.clinicIds)},
+        //     {status: dataChangeActive.active === true ? true : false}
+        // )
+        await this.userRepo
+            .createQueryBuilder()
+            .update('users')
+            .set({ status: dataChangeActive.active === true ? true : false })
+            .where({ clinic: In(dataChangeActive.clinicIds) })
+            .execute();
+
         return true;
     }
 } 
