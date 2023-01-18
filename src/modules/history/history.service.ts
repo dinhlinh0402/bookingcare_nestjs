@@ -4,6 +4,7 @@ import { BookingStatus } from 'src/common/constants/booking.enum';
 import { CodeMessage } from 'src/common/constants/code-message';
 import { IFile } from 'src/common/interfaces/file.interface';
 import { ErrorException } from 'src/exceptions/error.exception';
+import baseURL from 'src/utils/baseUrl';
 import { sendMail } from 'src/utils/sendMail.util';
 import { BookingRepository } from '../bookings/booking.repository';
 import { HistoryCreateDto } from './dto/history-data.dto';
@@ -71,8 +72,8 @@ export class HistoryService {
       );
       const attachments = {
         fileName: `Don_Thuoc_${historyData.namePatient.replace('', '_')}`,
-        // link: `http://14.225.255.59:8000/${file.path}`
-        link: `http://14.225.255.59:8000/uploads/prescription/BS-NodeJs-Dev-TTS-7950.docx`
+        link: `${baseURL}${file.path}`
+        // link: `http://14.225.255.59:8000/uploads/prescription/BS-NodeJs-Dev-TTS-7950.docx`
       }
       try {
         await sendMail(historyData.email, sendPrescriptionSubject, mailContent, attachments);
