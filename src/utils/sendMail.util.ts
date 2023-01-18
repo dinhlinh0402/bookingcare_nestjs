@@ -1,7 +1,7 @@
 import { OAuth2Client } from 'google-auth-library';
 import * as nodemailer from 'nodemailer';
 
-export const sendMail = async (to: string, subject: string, htmlContent: string) => {
+export const sendMail = async (to: string, subject: string, htmlContent: string, attachments?: { fileName: string, link: string }) => {
     // if (
     //     !process.env.MAIL_HOST ||
     //     !process.env.MAIL_PORT ||
@@ -59,6 +59,10 @@ export const sendMail = async (to: string, subject: string, htmlContent: string)
         to: to,
         subject: subject,
         html: htmlContent,
+        attachments: attachments && attachments.link ? {
+            filename: attachments.fileName,
+            path: attachments.link
+        } : null,
         // attachments: {
         //     filename: 'test.png',
         //     path: 'http://183.81.32.36:8000/uploads/image_2021-10-04_14-25-21-10740.png'

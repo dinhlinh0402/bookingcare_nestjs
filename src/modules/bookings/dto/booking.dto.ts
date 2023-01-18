@@ -2,6 +2,7 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 import { BookingStatus, BookingType } from "src/common/constants/booking.enum";
 import { GenderEnum } from "src/common/constants/gender";
 import { AbstractDto } from "src/common/dto/abstract.dto";
+import { HistoryDto } from "src/modules/history/dto/history.dto";
 import { ScheduleDto } from "src/modules/schedules/dto/schedule.dto";
 import { UserDto } from "src/modules/user/dto/user.dto";
 import { BookingEntity, BookingRelativesEntity } from "../booking.entity";
@@ -71,6 +72,9 @@ export class BookingDto extends AbstractDto {
     @ApiPropertyOptional()
     bookingDate: Date;
 
+    @ApiPropertyOptional({ type: () => HistoryDto })
+    history: HistoryDto
+
     constructor(entity: BookingEntity) {
         super(entity);
 
@@ -97,6 +101,9 @@ export class BookingDto extends AbstractDto {
         if (entity.bookingRelatives) {
             this.bookingRelatives = entity.bookingRelatives;
         }
+
+        if (entity.history) {
+            this.history = entity.history;
+        }
     }
 }
-

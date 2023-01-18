@@ -2,6 +2,7 @@ import { AbstractEntity } from "src/common/abstract.entity";
 import { BookingStatus, BookingType } from "src/common/constants/booking.enum";
 import { GenderEnum } from "src/common/constants/gender";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
+import { HistoryEntity } from "../history/history.entity";
 import { ScheduleEntity } from "../schedules/schedule.entity";
 import { UserEntity } from "../user/user.entity";
 import { BookingDto, BookingRelativesDto } from "./dto/booking.dto";
@@ -80,6 +81,12 @@ export class BookingEntity extends AbstractEntity<BookingDto> {
     @JoinColumn()
     bookingRelatives: BookingRelativesEntity;
 
+    @OneToOne(() => HistoryEntity, {
+        onDelete: 'SET NULL'
+    })
+    @JoinColumn()
+    history: HistoryEntity;
+
     // @ManyToOne(() => UserEntity, {
     //     onDelete: 'SET NULL'
     // })
@@ -87,4 +94,3 @@ export class BookingEntity extends AbstractEntity<BookingDto> {
 
     dtoClass = BookingDto;
 }
-

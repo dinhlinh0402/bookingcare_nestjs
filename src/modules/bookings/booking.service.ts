@@ -167,6 +167,7 @@ export class BookingsService {
             .leftJoinAndSelect('booking.patient', 'patient')
             .leftJoinAndSelect('doctor.clinic', 'clinic')
             .leftJoinAndSelect('booking.bookingRelatives', 'bookingRelatives')
+            .leftJoinAndSelect('booking.history', 'history')
             .orderBy(`booking.${bookingData.orderBy}`, bookingData.order)
 
         if (bookingData.doctorId) {
@@ -208,7 +209,7 @@ export class BookingsService {
 
         const booking = await this.bookingRepo.findOne({
             where: { id: bookingId },
-            relations: ['schedule', 'doctor', 'patient', 'bookingRelatives']
+            relations: ['schedule', 'doctor', 'patient', 'bookingRelatives', 'history']
         })
 
         if (!booking) {
