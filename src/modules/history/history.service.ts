@@ -41,8 +41,6 @@ export class HistoryService {
       )
     }
 
-    console.log('booking: ', bookinged);
-
     if (bookinged.status !== BookingStatus.CONFIRMED) {
       throw new ErrorException(
         HttpStatus.NOT_FOUND,
@@ -71,7 +69,7 @@ export class HistoryService {
         date,
       );
       const attachments = {
-        fileName: `Don_Thuoc_${file.fieldname}`,
+        fileName: `Don_Thuoc_${file.filename}`,
         link: `${baseURL}${file.path}`
         // link: `http://14.225.255.59:8000/uploads/prescription/BS-NodeJs-Dev-TTS-7950.docx`
       }
