@@ -71,7 +71,7 @@ export class HistoryService {
         date,
       );
       const attachments = {
-        fileName: `Don_Thuoc_${historyData.namePatient.replace('', '_')}`,
+        fileName: `Don_Thuoc_${file.fieldname}`,
         link: `${baseURL}${file.path}`
         // link: `http://14.225.255.59:8000/uploads/prescription/BS-NodeJs-Dev-TTS-7950.docx`
       }
